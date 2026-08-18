@@ -42,6 +42,15 @@ int ws_utimensat(int dirfd, const char *pathname, const void *times, int flags);
 int ws_ftruncate(int fd, int64_t length);
 int ws_symlinkat(const char *target, int newdirfd, const char *linkpath);
 int ws_symlink(const char *target, const char *linkpath);
+#define WS_LOCK_SH 1
+#define WS_LOCK_EX 2
+#define WS_LOCK_NB 4
+#define WS_LOCK_UN 8
+
+int ws_flock(int fd, int how);
+intptr_t ws_copy_file_range(int fd_in, int64_t *off_in, int fd_out, int64_t *off_out, size_t len, unsigned flags);
+int ws_statfs(const char *path, void *buf);
+int ws_fstatfs(int fd, void *buf);
 int ws_pipe2(int pipefd[2], int flags);
 int ws_dup3(int oldfd, int newfd, int flags);
 void *ws_mmap(void *addr, size_t length, int prot, int flags, int fd, int64_t offset);

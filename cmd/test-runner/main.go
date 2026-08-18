@@ -123,6 +123,58 @@ func main() {
 		}
 		return nil
 	})
+	runTest("Flock advisory file locking", func() error {
+		fd, err := winescape.Open(testFile, winescape.O_RDWR, 0)
+		if err != nil {
+			return err
+		}
+		defer winescape.Close(fd)
+
+		if err := winescape.Flock(fd, winescape.LOCK_EX|winescape.LOCK_NB); err != nil {
+			return fmt.Errorf("flock LOCK_EX error: %w", err)
+		}
+		if err := winescape.Flock(fd, winescape.LOCK_UN); err != nil {
+			return fmt.Errorf("flock LOCK_UN error: %w", err)
+		}
+		return nil
+	})
+
+	runTest("CopyFileRange in-kernel zero-copy", func() error {
+		dstFile := testFile + ".copy"
+		defer winescape.Unlink(dstFile)
+
+		fdIn, err := winescape.Open(testFile, winescape.O_RDONLY, 0)
+		if err != nil {
+			return err
+		}
+		defer winescape.Close(fdIn)
+
+		fdOut, err := winescape.Open(dstFile, winescape.O_WRONLY|winescape.O_CREAT|winescape.O_TRUNC, 0644)
+		if err != nil {
+			return err
+		}
+		defer winescape.Close(fdOut)
+
+		n, err := winescape.CopyFileRange(fdIn, nil, fdOut, nil, 10, 0)
+		if err != nil {
+			return fmt.Errorf("CopyFileRange error: %w", err)
+		}
+		if n != 10 {
+			return fmt.Errorf("CopyFileRange copied %d bytes, want 10", n)
+		}
+		return nil
+	})
+
+	runTest("Statfs filesystem statistics (/tmp)", func() error {
+		var sfs winescape.Statfs_t
+		if err := winescape.Statfs("/tmp", &sfs); err != nil {
+			return fmt.Errorf("statfs error: %w", err)
+		}
+		if sfs.Bsize <= 0 || sfs.Bavail <= 0 {
+			return fmt.Errorf("implausible statfs data: bsize=%d bavail=%d", sfs.Bsize, sfs.Bavail)
+		}
+		return nil
+	})
 
 	runTest("Symlink and Readlink operations", func() error {
 		linkPath := testFile + ".link"

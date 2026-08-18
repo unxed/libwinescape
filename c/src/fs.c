@@ -162,6 +162,45 @@ int ws_symlinkat(const char *target, int newdirfd, const char *linkpath) {
 int ws_symlink(const char *target, const char *linkpath) {
     return ws_symlinkat(target, WS_AT_FDCWD, linkpath);
 }
+int ws_flock(int fd, int how) {
+    int err = 0;
+    intptr_t r = ws_syscall(WS_SYS_FLOCK, (uintptr_t)fd, (uintptr_t)how, 0, &err);
+    if (r < 0) {
+        errno = err;
+        return -1;
+    }
+    return 0;
+}
+
+intptr_t ws_copy_file_range(int fd_in, int64_t *off_in, int fd_out, int64_t *off_out, size_t len, unsigned flags) {
+    int err = 0;
+    intptr_t r = ws_syscall6(WS_SYS_COPY_FILE_RANGE, (uintptr_t)fd_in, (uintptr_t)off_in, (uintptr_t)fd_out, (uintptr_t)off_out, (uintptr_t)len, (uintptr_t)flags, &err);
+    if (r < 0) {
+        errno = err;
+        return -1;
+    }
+    return r;
+}
+
+int ws_statfs(const char *path, void *buf) {
+    int err = 0;
+    intptr_t r = ws_syscall(WS_SYS_STATFS, (uintptr_t)path, (uintptr_t)buf, 0, &err);
+    if (r < 0) {
+        errno = err;
+        return -1;
+    }
+    return 0;
+}
+
+int ws_fstatfs(int fd, void *buf) {
+    int err = 0;
+    intptr_t r = ws_syscall(WS_SYS_FSTATFS, (uintptr_t)fd, (uintptr_t)buf, 0, &err);
+    if (r < 0) {
+        errno = err;
+        return -1;
+    }
+    return 0;
+}
 
 int ws_readlink(const char *path, char *buf, size_t bufsiz) {
     int err = 0;

@@ -458,4 +458,36 @@ var SyscallTable = []SyscallEntry{
 			OSFreeBSD: {ArchAMD64: 504},
 		},
 	},
+	{
+		Name: "copy_file_range",
+		Args: 6,
+		Numbers: map[TargetOS]map[TargetArch]uint64{
+			OSLinux:   {ArchAMD64: 326, ArchARM64: 285, ArchRISCV64: 285},
+			OSFreeBSD: {ArchAMD64: 569},
+		},
+	},
+	{
+		Name: "flock",
+		Args: 2,
+		Numbers: map[TargetOS]map[TargetArch]uint64{
+			OSLinux:   {ArchAMD64: 73, ArchARM64: 32, ArchRISCV64: 32},
+			OSFreeBSD: {ArchAMD64: 131},
+		},
+	},
+	{
+		Name: "statfs",
+		Args: 2,
+		Numbers: map[TargetOS]map[TargetArch]uint64{
+			OSLinux:   {ArchAMD64: 137, ArchARM64: 43, ArchRISCV64: 43},
+			OSFreeBSD: {ArchAMD64: 396},
+		},
+	},
+	{
+		Name: "fstatfs",
+		Args: 2,
+		Numbers: map[TargetOS]map[TargetArch]uint64{
+			OSLinux:   {ArchAMD64: 138, ArchARM64: 44, ArchRISCV64: 44},
+			OSFreeBSD: {ArchAMD64: 397},
+		},
+	},
 }

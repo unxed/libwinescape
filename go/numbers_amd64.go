@@ -59,4 +59,8 @@ const (
 	sysUtimensat       uintptr = 280
 	sysFtruncate       uintptr = 77
 	sysSymlinkat       uintptr = 266
+	sysCopyFileRange   uintptr = 326
+	sysFlock           uintptr = 73
+	sysStatfs          uintptr = 137
+	sysFstatfs         uintptr = 138
 	)

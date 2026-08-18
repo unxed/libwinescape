@@ -29,6 +29,10 @@ const (
 	SEEK_SET = 0
 	SEEK_CUR = 1
 	SEEK_END = 2
+	LOCK_SH = 1
+	LOCK_EX = 2
+	LOCK_NB = 4
+	LOCK_UN = 8
 
 	DT_UNKNOWN uint8 = 0
 	DT_FIFO    uint8 = 1
@@ -45,6 +49,21 @@ const (
 type Timespec struct {
 	Sec  int64
 	Nsec int64
+}
+// Statfs_t matches the standard 64-bit Linux struct statfs layout (120 bytes).
+type Statfs_t struct {
+	Type    int64
+	Bsize   int64
+	Blocks  uint64
+	Bfree   uint64
+	Bavail  uint64
+	Files   uint64
+	Ffree   uint64
+	Fsid    [2]int32
+	Namelen int64
+	Frsize  int64
+	Flags   int64
+	Spare   [4]int64
 }
 
 // Stat_t matches the standard 64-bit Linux struct stat layout (144 bytes).
@@ -416,6 +435,43 @@ func Symlinkat(target string, newdirfd int, linkpath string) error {
 // Symlink creates linkpath as a symbolic link to target.
 func Symlink(target, linkpath string) error {
 	return Symlinkat(target, AT_FDCWD, linkpath)
+}
+// CopyFileRange copies up to count bytes from fdIn at offIn to fdOut at offOut using in-kernel zero-copy.
+func CopyFileRange(fdIn int, offIn *int64, fdOut int, offOut *int64, count int, flags int) (int, error) {
+	var offInPtr, offOutPtr uintptr
+	if offIn != nil {
+		offInPtr = uintptr(unsafe.Pointer(offIn))
+	}
+	if offOut != nil {
+		offOutPtr = uintptr(unsafe.Pointer(offOut))
+	}
+	r1, _, err := Syscall6(sysCopyFileRange, uintptr(fdIn), offInPtr, uintptr(fdOut), offOutPtr, uintptr(count), uintptr(flags))
+	if err != nil {
+		return 0, err
+	}
+	return int(r1), nil
+}
+
+// Flock applies or removes an advisory lock on open file descriptor fd.
+func Flock(fd int, how int) error {
+	_, _, err := Syscall(sysFlock, uintptr(fd), uintptr(how), 0)
+	return err
+}
+
+// Statfs returns filesystem statistics for the filesystem containing the file at path.
+func Statfs(path string, buf *Statfs_t) error {
+	p, err := BytePtrFromString(ToUnixPath(path))
+	if err != nil {
+		return err
+	}
+	_, _, errSys := Syscall(sysStatfs, uintptr(unsafe.Pointer(p)), uintptr(unsafe.Pointer(buf)), 0)
+	return errSys
+}
+
+// Fstatfs returns filesystem statistics for the open file descriptor fd.
+func Fstatfs(fd int, buf *Statfs_t) error {
+	_, _, err := Syscall(sysFstatfs, uintptr(fd), uintptr(unsafe.Pointer(buf)), 0)
+	return err
 }
 
 // Fstat retrieves file status for open fd.
