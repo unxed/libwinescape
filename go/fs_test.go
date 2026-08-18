@@ -33,10 +33,10 @@ func TestStat_t_Size(t *testing.T) {
 func TestParseDirent64_Synthetic(t *testing.T) {
 	// Build a synthetic 64-bit linux_dirent64 buffer:
 	// Entry 1: ino=100, off=1, reclen=24, type=DT_DIR (4), name="."
-	// Entry 2: ino=101, off=2, reclen=24, type=DT_REG (8), name="test.txt"
-	buf := make([]byte, 48)
+	// Entry 2: ino=101, off=2, reclen=32, type=DT_REG (8), name="test.txt"
+	buf := make([]byte, 56)
 
-	// Entry 1
+	// Entry 1 (offset 0..24)
 	binary.LittleEndian.PutUint64(buf[0:8], 100)
 	binary.LittleEndian.PutUint64(buf[8:16], 1)
 	binary.LittleEndian.PutUint16(buf[16:18], 24)
@@ -44,12 +44,12 @@ func TestParseDirent64_Synthetic(t *testing.T) {
 	buf[19] = '.'
 	buf[20] = 0
 
-	// Entry 2
+	// Entry 2 (offset 24..56)
 	binary.LittleEndian.PutUint64(buf[24:32], 101)
 	binary.LittleEndian.PutUint64(buf[32:40], 2)
-	binary.LittleEndian.PutUint16(buf[40:42], 24)
+	binary.LittleEndian.PutUint16(buf[40:42], 32)
 	buf[42] = DT_REG
-	copy(buf[43:51], "test.txt\x00")
+	copy(buf[43:52], "test.txt\x00")
 
 	entries, err := ParseDirent64(buf)
 	if err != nil {

@@ -7,14 +7,13 @@ Before relying on `libwinescape` in production, you can verify whether your Wine
 From the repository root:
 
 ```bash
-cd probe
-GOOS=windows GOARCH=amd64 CGO_ENABLED=0 go build -o wine_syscall_probe.exe .
+GOOS=windows GOARCH=amd64 CGO_ENABLED=0 go build -o probe/wine_syscall_probe.exe ./probe
 ```
 
 ## Running under Wine
 
 ```bash
-wine wine_syscall_probe.exe
+wine probe/wine_syscall_probe.exe
 ```
 
 Expected output:

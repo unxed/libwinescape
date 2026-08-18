@@ -9,7 +9,7 @@ gen:
 	go run ./cmd/gen-numbers .
 
 probe:
-	cd probe && GOOS=windows GOARCH=amd64 CGO_ENABLED=0 go build -o wine_syscall_probe.exe .
+	GOOS=windows GOARCH=amd64 CGO_ENABLED=0 go build -o probe/wine_syscall_probe.exe ./probe
 
 test-wine:
 	@mkdir -p build

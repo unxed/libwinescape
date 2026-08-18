@@ -8,17 +8,17 @@ import (
 
 // Standard POSIX / Linux open and access flags.
 const (
-	O_RDONLY   = 0x0000
-	O_WRONLY   = 0x0001
-	O_RDWR     = 0x0002
-	O_CREAT    = 0x0040
-	O_EXCL     = 0x0080
-	O_NOCTTY   = 0x0100
-	O_TRUNC    = 0x0200
-	O_APPEND   = 0x0400
-	O_NONBLOCK = 0x0800
+	O_RDONLY    = 0x0000
+	O_WRONLY    = 0x0001
+	O_RDWR      = 0x0002
+	O_CREAT     = 0x0040
+	O_EXCL      = 0x0080
+	O_NOCTTY    = 0x0100
+	O_TRUNC     = 0x0200
+	O_APPEND    = 0x0400
+	O_NONBLOCK  = 0x0800
 	O_DIRECTORY = 0x10000
-	O_CLOEXEC  = 0x80000
+	O_CLOEXEC   = 0x80000
 
 	AT_FDCWD            = -100
 	AT_SYMLINK_NOFOLLOW = 0x100
@@ -85,6 +85,7 @@ func BytePtrFromString(s string) (*byte, error) {
 	b[len(s)] = 0
 	return &b[0], nil
 }
+
 // Getpid returns the process ID of the calling process directly from the host kernel.
 func Getpid() (int, error) {
 	r1, _, err := Syscall(sysGetpid, 0, 0, 0)

@@ -1,3 +1,3 @@
-module github.com/unxed/libwinescape/probe
+module github.com/unxed/libwinescape
 
 go 1.20
