@@ -38,6 +38,14 @@ int ws_pipe2(int pipefd[2], int flags);
 int ws_dup3(int oldfd, int newfd, int flags);
 void *ws_mmap(void *addr, size_t length, int prot, int flags, int fd, int64_t offset);
 int ws_munmap(void *addr, size_t length);
+int ws_inotify_init1(int flags);
+int ws_inotify_add_watch(int fd, const char *pathname, uint32_t mask);
+int ws_inotify_rm_watch(int fd, int wd);
+int ws_getuid(void);
+int ws_getgid(void);
+int ws_geteuid(void);
+int ws_getegid(void);
+int ws_getppid(void);
 
 #ifdef __cplusplus
 }

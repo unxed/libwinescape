@@ -27,6 +27,18 @@
 #define WS_SYS_RENAMEAT 264
 #define WS_SYS_READLINKAT 267
 #define WS_SYS_FACCESSAT 269
+#define WS_SYS_PIPE2 293
+#define WS_SYS_DUP3 292
+#define WS_SYS_MMAP 9
+#define WS_SYS_MUNMAP 11
+#define WS_SYS_INOTIFY_INIT1 294
+#define WS_SYS_INOTIFY_ADD_WATCH 254
+#define WS_SYS_INOTIFY_RM_WATCH 255
+#define WS_SYS_GETUID 102
+#define WS_SYS_GETGID 104
+#define WS_SYS_GETEUID 107
+#define WS_SYS_GETEGID 108
+#define WS_SYS_GETPPID 110
 #elif defined(__linux__) && (defined(__aarch64__) || defined(_M_ARM64))
 #define WS_SYS_READ 63
 #define WS_SYS_WRITE 64
@@ -44,6 +56,18 @@
 #define WS_SYS_RENAMEAT 38
 #define WS_SYS_READLINKAT 78
 #define WS_SYS_FACCESSAT 48
+#define WS_SYS_PIPE2 59
+#define WS_SYS_DUP3 24
+#define WS_SYS_MMAP 222
+#define WS_SYS_MUNMAP 215
+#define WS_SYS_INOTIFY_INIT1 26
+#define WS_SYS_INOTIFY_ADD_WATCH 27
+#define WS_SYS_INOTIFY_RM_WATCH 28
+#define WS_SYS_GETUID 174
+#define WS_SYS_GETGID 176
+#define WS_SYS_GETEUID 175
+#define WS_SYS_GETEGID 177
+#define WS_SYS_GETPPID 173
 #elif defined(__FreeBSD__) && (defined(__x86_64__) || defined(_M_X64))
 #define WS_SYS_READ 3
 #define WS_SYS_WRITE 4
@@ -69,6 +93,15 @@
 #define WS_SYS_RENAMEAT 501
 #define WS_SYS_READLINKAT 505
 #define WS_SYS_FACCESSAT 489
+#define WS_SYS_PIPE2 538
+#define WS_SYS_DUP3 545
+#define WS_SYS_MMAP 477
+#define WS_SYS_MUNMAP 73
+#define WS_SYS_GETUID 24
+#define WS_SYS_GETGID 47
+#define WS_SYS_GETEUID 25
+#define WS_SYS_GETEGID 43
+#define WS_SYS_GETPPID 39
 #else
 #error "Unsupported host OS / architecture combination for libwinescape"
 #endif

@@ -261,12 +261,73 @@ var SyscallTable = []SyscallEntry{
 			OSFreeBSD: {ArchAMD64: 477},
 		},
 	},
-	{
-		Name: "munmap",
-		Args: 2,
-		Numbers: map[TargetOS]map[TargetArch]uint64{
-			OSLinux:   {ArchAMD64: 11, ArchARM64: 215, ArchRISCV64: 215},
-			OSFreeBSD: {ArchAMD64: 73},
+		{
+			Name: "munmap",
+			Args: 2,
+			Numbers: map[TargetOS]map[TargetArch]uint64{
+				OSLinux:   {ArchAMD64: 11, ArchARM64: 215, ArchRISCV64: 215},
+				OSFreeBSD: {ArchAMD64: 73},
+			},
 		},
-	},
-}
+		{
+			Name: "inotify_init1",
+			Args: 1,
+			Numbers: map[TargetOS]map[TargetArch]uint64{
+				OSLinux: {ArchAMD64: 294, ArchARM64: 26, ArchRISCV64: 26},
+			},
+		},
+		{
+			Name: "inotify_add_watch",
+			Args: 3,
+			Numbers: map[TargetOS]map[TargetArch]uint64{
+				OSLinux: {ArchAMD64: 254, ArchARM64: 27, ArchRISCV64: 27},
+			},
+		},
+		{
+			Name: "inotify_rm_watch",
+			Args: 2,
+			Numbers: map[TargetOS]map[TargetArch]uint64{
+				OSLinux: {ArchAMD64: 255, ArchARM64: 28, ArchRISCV64: 28},
+			},
+		},
+		{
+			Name: "getuid",
+			Args: 0,
+			Numbers: map[TargetOS]map[TargetArch]uint64{
+				OSLinux:   {ArchAMD64: 102, ArchARM64: 174, ArchRISCV64: 174},
+				OSFreeBSD: {ArchAMD64: 24},
+			},
+		},
+		{
+			Name: "getgid",
+			Args: 0,
+			Numbers: map[TargetOS]map[TargetArch]uint64{
+				OSLinux:   {ArchAMD64: 104, ArchARM64: 176, ArchRISCV64: 176},
+				OSFreeBSD: {ArchAMD64: 47},
+			},
+		},
+		{
+			Name: "geteuid",
+			Args: 0,
+			Numbers: map[TargetOS]map[TargetArch]uint64{
+				OSLinux:   {ArchAMD64: 107, ArchARM64: 175, ArchRISCV64: 175},
+				OSFreeBSD: {ArchAMD64: 25},
+			},
+		},
+		{
+			Name: "getegid",
+			Args: 0,
+			Numbers: map[TargetOS]map[TargetArch]uint64{
+				OSLinux:   {ArchAMD64: 108, ArchARM64: 177, ArchRISCV64: 177},
+				OSFreeBSD: {ArchAMD64: 43},
+			},
+		},
+		{
+			Name: "getppid",
+			Args: 0,
+			Numbers: map[TargetOS]map[TargetArch]uint64{
+				OSLinux:   {ArchAMD64: 110, ArchARM64: 173, ArchRISCV64: 173},
+				OSFreeBSD: {ArchAMD64: 39},
+			},
+		},
+	}

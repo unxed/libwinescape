@@ -171,6 +171,17 @@ func main() {
 		return nil
 	})
 
+	runTest("Host POSIX Identity (getuid, getgid, getppid)", func() error {
+		uid := winescape.Getuid()
+		gid := winescape.Getgid()
+		ppid := winescape.Getppid()
+		if uid < 0 || gid < 0 || ppid < 0 {
+			return fmt.Errorf("invalid identity values: uid=%d gid=%d ppid=%d", uid, gid, ppid)
+		}
+		fmt.Printf("[uid=%d, gid=%d, ppid=%d] ", uid, gid, ppid)
+		return nil
+	})
+
 	runTest("Host Pipe2 syscall", func() error {
 		r, w, err := winescape.Pipe2(winescape.O_CLOEXEC)
 		if err != nil {
@@ -192,6 +203,56 @@ func main() {
 		}
 		if string(rbuf[:nr]) != string(msg) {
 			return fmt.Errorf("pipe data mismatch: got %q, want %q", string(rbuf[:nr]), string(msg))
+		}
+		return nil
+	})
+
+	runTest("Linux Inotify file event watcher", func() error {
+		ifd, err := winescape.InotifyInit1(winescape.IN_CLOEXEC | winescape.IN_NONBLOCK)
+		if err != nil {
+			return fmt.Errorf("inotify_init1 error: %w", err)
+		}
+		defer winescape.Close(ifd)
+
+		watchDir := fmt.Sprintf("/tmp/winescape_inotify_%d_%d", os.Getpid(), time.Now().UnixNano())
+		if err := winescape.Mkdir(watchDir, 0755); err != nil {
+			return fmt.Errorf("mkdir watchDir error: %w", err)
+		}
+		defer winescape.Rmdir(watchDir)
+
+		wd, err := winescape.InotifyAddWatch(ifd, watchDir, winescape.IN_CREATE)
+		if err != nil {
+			return fmt.Errorf("inotify_add_watch error: %w", err)
+		}
+		defer winescape.InotifyRmWatch(ifd, wd)
+
+		testCreated := filepath.Join(watchDir, "event.tmp")
+		cfd, err := winescape.Open(testCreated, winescape.O_WRONLY|winescape.O_CREAT|winescape.O_TRUNC, 0644)
+		if err != nil {
+			return fmt.Errorf("create watched file error: %w", err)
+		}
+		winescape.Close(cfd)
+		defer winescape.Unlink(testCreated)
+
+		buf := make([]byte, 4096)
+		n, err := winescape.Read(ifd, buf)
+		if err != nil {
+			return fmt.Errorf("read inotify events error: %w", err)
+		}
+		events, err := winescape.ParseInotifyEvents(buf[:n])
+		if err != nil {
+			return fmt.Errorf("ParseInotifyEvents error: %w", err)
+		}
+
+		found := false
+		for _, e := range events {
+			if e.Name == "event.tmp" && (e.Mask&winescape.IN_CREATE != 0) {
+				found = true
+				break
+			}
+		}
+		if !found {
+			return fmt.Errorf("expected IN_CREATE event for 'event.tmp', got: %+v", events)
 		}
 		return nil
 	})

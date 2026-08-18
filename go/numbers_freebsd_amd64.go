@@ -33,6 +33,14 @@ const (
 		sysFaccessat     uintptr = 489
 		sysPipe2         uintptr = 538
 		sysDup3          uintptr = 545
-		sysMmap          uintptr = 477
-		sysMunmap        uintptr = 73
-	)
+			sysMmap          uintptr = 477
+			sysMunmap        uintptr = 73
+			sysInotifyInit1  uintptr = 0
+			sysInotifyAddWatch uintptr = 0
+			sysInotifyRmWatch uintptr = 0
+			sysGetuid        uintptr = 24
+			sysGetgid        uintptr = 47
+			sysGeteuid       uintptr = 25
+			sysGetegid       uintptr = 43
+			sysGetppid       uintptr = 39
+		)

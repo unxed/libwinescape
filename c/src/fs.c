@@ -150,3 +150,57 @@ int ws_munmap(void *addr, size_t length) {
     }
     return 0;
 }
+int ws_inotify_init1(int flags) {
+    int err = 0;
+    intptr_t r = ws_syscall(WS_SYS_INOTIFY_INIT1, (uintptr_t)flags, 0, 0, &err);
+    if (r < 0) {
+        errno = err;
+        return -1;
+    }
+    return (int)r;
+}
+
+int ws_inotify_add_watch(int fd, const char *pathname, uint32_t mask) {
+    int err = 0;
+    intptr_t r = ws_syscall(WS_SYS_INOTIFY_ADD_WATCH, (uintptr_t)fd, (uintptr_t)pathname, (uintptr_t)mask, &err);
+    if (r < 0) {
+        errno = err;
+        return -1;
+    }
+    return (int)r;
+}
+
+int ws_inotify_rm_watch(int fd, int wd) {
+    int err = 0;
+    intptr_t r = ws_syscall(WS_SYS_INOTIFY_RM_WATCH, (uintptr_t)fd, (uintptr_t)wd, 0, &err);
+    if (r < 0) {
+        errno = err;
+        return -1;
+    }
+    return 0;
+}
+
+int ws_getuid(void) {
+    int err = 0;
+    return (int)ws_syscall(WS_SYS_GETUID, 0, 0, 0, &err);
+}
+
+int ws_getgid(void) {
+    int err = 0;
+    return (int)ws_syscall(WS_SYS_GETGID, 0, 0, 0, &err);
+}
+
+int ws_geteuid(void) {
+    int err = 0;
+    return (int)ws_syscall(WS_SYS_GETEUID, 0, 0, 0, &err);
+}
+
+int ws_getegid(void) {
+    int err = 0;
+    return (int)ws_syscall(WS_SYS_GETEGID, 0, 0, 0, &err);
+}
+
+int ws_getppid(void) {
+    int err = 0;
+    return (int)ws_syscall(WS_SYS_GETPPID, 0, 0, 0, &err);
+}
