@@ -29,10 +29,10 @@ const (
 	SEEK_SET = 0
 	SEEK_CUR = 1
 	SEEK_END = 2
-	LOCK_SH = 1
-	LOCK_EX = 2
-	LOCK_NB = 4
-	LOCK_UN = 8
+	LOCK_SH  = 1
+	LOCK_EX  = 2
+	LOCK_NB  = 4
+	LOCK_UN  = 8
 
 	DT_UNKNOWN uint8 = 0
 	DT_FIFO    uint8 = 1
@@ -50,6 +50,7 @@ type Timespec struct {
 	Sec  int64
 	Nsec int64
 }
+
 // Statfs_t matches the standard 64-bit Linux struct statfs layout (120 bytes).
 type Statfs_t struct {
 	Type    int64
@@ -214,6 +215,7 @@ func (f *File) Stat() (*Stat_t, error) {
 	}
 	return &st, nil
 }
+
 // Truncate changes the size of the open file.
 func (f *File) Truncate(size int64) error {
 	return Ftruncate(f.fd, size)
@@ -344,6 +346,7 @@ func Seek(fd int, offset int64, whence int) (int64, error) {
 	}
 	return int64(r1), nil
 }
+
 // Ftruncate truncates open file descriptor fd to length bytes.
 func Ftruncate(fd int, length int64) error {
 	_, _, err := Syscall(sysFtruncate, uintptr(fd), uintptr(length), 0)
@@ -436,6 +439,7 @@ func Symlinkat(target string, newdirfd int, linkpath string) error {
 func Symlink(target, linkpath string) error {
 	return Symlinkat(target, AT_FDCWD, linkpath)
 }
+
 // CopyFileRange copies up to count bytes from fdIn at offIn to fdOut at offOut using in-kernel zero-copy.
 func CopyFileRange(fdIn int, offIn *int64, fdOut int, offOut *int64, count int, flags int) (int, error) {
 	var offInPtr, offOutPtr uintptr

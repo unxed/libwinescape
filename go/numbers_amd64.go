@@ -50,10 +50,10 @@ const (
 	sysAccept4         uintptr = 288
 	sysIoctl           uintptr = 16
 	sysNanosleep       uintptr = 35
-		sysClockGettime    uintptr = 228
-		sysClockNanosleep  uintptr = 230
-		sysKill            uintptr = 62
-		sysWait4           uintptr = 61
+	sysClockGettime    uintptr = 228
+	sysClockNanosleep  uintptr = 230
+	sysKill            uintptr = 62
+	sysWait4           uintptr = 61
 	sysFchmodat        uintptr = 268
 	sysFchownat        uintptr = 260
 	sysUtimensat       uintptr = 280
@@ -64,4 +64,4 @@ const (
 	sysStatfs          uintptr = 137
 	sysFstatfs         uintptr = 138
 	sysExecve          uintptr = 59
-	)
+)

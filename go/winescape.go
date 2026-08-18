@@ -11,6 +11,7 @@ func (e Errno) Error() string {
 	}
 	return syscall.Errno(e).Error()
 }
+
 // Standard POSIX / Linux errno constants.
 const (
 	EPERM    = Errno(1)

@@ -15,7 +15,8 @@ To add a new syscall:
 3. **Regenerate Tables:**
    Run:
    ```bash
-   go run ./cmd/gen-numbers
+   go run ./cmd/gen-numbers .
+   # or: make gen
    ```
    This updates:
    - `go/numbers_linux_amd64.go`

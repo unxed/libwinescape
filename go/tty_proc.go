@@ -70,6 +70,7 @@ func ClockNanosleep(clockid int, flags int, req *Timespec, rem *Timespec) error 
 func Nanosleep(req *Timespec, rem *Timespec) error {
 	return ClockNanosleep(CLOCK_REALTIME, 0, req, rem)
 }
+
 // Sleep pauses execution of the calling goroutine for duration d using high-resolution host clock_nanosleep,
 // automatically retrying on host signal interruptions (EINTR / ERESTART).
 func Sleep(d time.Duration) error {
