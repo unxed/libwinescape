@@ -72,6 +72,27 @@ func gostring(p *byte) string {
 }
 
 // Available returns true if raw host syscalls are supported in the current runtime environment.
+//
+// Restricted to Linux hosts only. The generic Go trampoline (syscall6_raw,
+// go/trampoline_windows_amd64.s) implements exactly one error-signalling
+// convention: a negative two's-complement value in AX means -errno, which is
+// the Linux calling convention. FreeBSD signals errors via the carry flag
+// with a *positive* errno in AX instead (see c/src/trampoline_freebsd_amd64.S,
+// which already implements this correctly for C consumers) -- the Go side has
+// no equivalent trampoline yet. Advertising FreeBSD support here before that
+// exists would make every Go caller silently misinterpret both FreeBSD
+// success values (as spurious errors, for large results) and FreeBSD errors
+// (as success, since the real error path never triggers), against wrong
+// syscall numbers to boot: the numbers_freebsd_amd64.go table additionally
+// requires the winescape_freebsd build tag, which is not on by default, so a
+// plain build reaching this codepath would even dispatch FreeBSD's numbers
+// as if they were Linux's.
+//
+// TODO(libwinescape): add a carry-flag-aware syscall6_raw variant for
+// windows/amd64 (mirroring c/src/trampoline_freebsd_amd64.S), a matching
+// windows/arm64 one if BSD-arm64 is ever probed (see spec/table.go), wire
+// Syscall6/RawSyscall6 to pick the right trampoline based on HostOS(), and
+// only then re-enable "freebsd" here.
 func Available() bool {
 	if availableChecked {
 		return availableCached
@@ -81,8 +102,9 @@ func Available() bool {
 		return false
 	}
 	os := strings.ToLower(HostOS())
-	// Raw kernel traps from PE code are supported on Linux and FreeBSD hosts
-	availableCached = (os == "linux" || os == "gnu/linux" || os == "freebsd")
+	// Raw kernel traps from PE code are supported today only on Linux hosts;
+	// see the TODO above for why FreeBSD is deliberately not included yet.
+	availableCached = (os == "linux" || os == "gnu/linux")
 	availableChecked = true
 	return availableCached
 }
