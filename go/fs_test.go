@@ -29,6 +29,49 @@ func TestStat_t_Size(t *testing.T) {
 		t.Errorf("expected Stat_t size to be 144 bytes, got %d", size)
 	}
 }
+func TestToUnixPath(t *testing.T) {
+	tests := []struct {
+		in   string
+		want string
+	}{
+		{"/home/user/file.txt", "/home/user/file.txt"},
+		{`Z:\home\user\file.txt`, "/home/user/file.txt"},
+		{`z:\etc\hosts`, "/etc/hosts"},
+		{`\\?\unix\usr\bin\sh`, "/usr/bin/sh"},
+		{`\??\unix\tmp\test.log`, "/tmp/test.log"},
+		{`dir\subdir\file.txt`, "dir/subdir/file.txt"},
+	}
+
+	for _, tt := range tests {
+		got := ToUnixPath(tt.in)
+		if got != tt.want {
+			t.Errorf("ToUnixPath(%q) = %q, want %q", tt.in, got, tt.want)
+		}
+	}
+}
+
+func TestStat_t_Helpers(t *testing.T) {
+	stDir := Stat_t{Mode: 0040755} // S_IFDIR | rwxr-xr-x
+	if !stDir.IsDir() || stDir.IsRegular() || stDir.IsSymlink() {
+		t.Errorf("stDir helpers mismatch: %+v", stDir)
+	}
+	if stDir.Permissions() != 0755 {
+		t.Errorf("expected permissions 0755, got 0%o", stDir.Permissions())
+	}
+
+	stReg := Stat_t{Mode: 0100644} // S_IFREG | rw-r--r--
+	if !stReg.IsRegular() || stReg.IsDir() || stReg.IsSymlink() {
+		t.Errorf("stReg helpers mismatch: %+v", stReg)
+	}
+	if stReg.Permissions() != 0644 {
+		t.Errorf("expected permissions 0644, got 0%o", stReg.Permissions())
+	}
+
+	stLnk := Stat_t{Mode: 0120777} // S_IFLNK
+	if !stLnk.IsSymlink() || stLnk.IsDir() || stLnk.IsRegular() {
+		t.Errorf("stLnk helpers mismatch: %+v", stLnk)
+	}
+}
 
 func TestParseDirent64_Synthetic(t *testing.T) {
 	// Build a synthetic 64-bit linux_dirent64 buffer:
