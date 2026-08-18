@@ -1,6 +1,8 @@
 package winescape
 
 import (
+	"syscall"
+	"time"
 	"unsafe"
 )
 
