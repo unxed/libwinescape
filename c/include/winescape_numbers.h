@@ -47,6 +47,7 @@
 #define WS_SYS_IOCTL 16
 #define WS_SYS_NANOSLEEP 35
 #define WS_SYS_CLOCK_GETTIME 228
+#define WS_SYS_CLOCK_NANOSLEEP 230
 #define WS_SYS_KILL 62
 #define WS_SYS_WAIT4 61
 #elif defined(__linux__) && (defined(__aarch64__) || defined(_M_ARM64))
@@ -86,6 +87,7 @@
 #define WS_SYS_IOCTL 29
 #define WS_SYS_NANOSLEEP 101
 #define WS_SYS_CLOCK_GETTIME 113
+#define WS_SYS_CLOCK_NANOSLEEP 115
 #define WS_SYS_KILL 129
 #define WS_SYS_WAIT4 260
 #elif defined(__FreeBSD__) && (defined(__x86_64__) || defined(_M_X64))
@@ -130,6 +132,7 @@
 #define WS_SYS_IOCTL 54
 #define WS_SYS_NANOSLEEP 240
 #define WS_SYS_CLOCK_GETTIME 232
+#define WS_SYS_CLOCK_NANOSLEEP 244
 #define WS_SYS_KILL 37
 #define WS_SYS_WAIT4 7
 #else

@@ -49,14 +49,25 @@ func ClockGettime(clockid int, ts *Timespec) error {
 	return err
 }
 
-// Nanosleep pauses thread execution for the specified duration.
-func Nanosleep(req *Timespec, rem *Timespec) error {
+// ClockNanosleep pauses thread execution for the specified duration using the specified POSIX clock.
+func ClockNanosleep(clockid int, flags int, req *Timespec, rem *Timespec) error {
 	var remPtr uintptr
 	if rem != nil {
 		remPtr = uintptr(unsafe.Pointer(rem))
 	}
-	_, _, err := Syscall(sysNanosleep, uintptr(unsafe.Pointer(req)), remPtr, 0)
+	var nr uintptr = sysClockNanosleep
+	if nr == 0 {
+		nr = sysNanosleep
+		_, _, err := Syscall(nr, uintptr(unsafe.Pointer(req)), remPtr, 0)
+		return err
+	}
+	_, _, err := Syscall6(nr, uintptr(clockid), uintptr(flags), uintptr(unsafe.Pointer(req)), remPtr, 0, 0)
 	return err
+}
+
+// Nanosleep pauses thread execution for the specified duration using CLOCK_REALTIME.
+func Nanosleep(req *Timespec, rem *Timespec) error {
+	return ClockNanosleep(CLOCK_REALTIME, 0, req, rem)
 }
 
 // Kill sends signal sig to process pid directly via the host kernel.

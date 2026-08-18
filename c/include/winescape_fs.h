@@ -49,6 +49,7 @@ int ws_getppid(void);
 int ws_ioctl(int fd, unsigned long req, void *arg);
 int ws_clock_gettime(int clockid, void *ts);
 int ws_nanosleep(const void *req, void *rem);
+int ws_clock_nanosleep(int clockid, int flags, const void *req, void *rem);
 int ws_kill(int pid, int sig);
 int ws_wait4(int pid, int *status, int options, void *rusage);
 

@@ -233,6 +233,15 @@ int ws_nanosleep(const void *req, void *rem) {
     }
     return 0;
 }
+int ws_clock_nanosleep(int clockid, int flags, const void *req, void *rem) {
+    int err = 0;
+    intptr_t r = ws_syscall6(WS_SYS_CLOCK_NANOSLEEP, (uintptr_t)clockid, (uintptr_t)flags, (uintptr_t)req, (uintptr_t)rem, 0, 0, &err);
+    if (r < 0) {
+        errno = err;
+        return -1;
+    }
+    return 0;
+}
 
 int ws_kill(int pid, int sig) {
     int err = 0;
