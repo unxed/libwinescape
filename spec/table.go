@@ -379,6 +379,14 @@ var SyscallTable = []SyscallEntry{
 		},
 	},
 	{
+		Name: "nanosleep",
+		Args: 2,
+		Numbers: map[TargetOS]map[TargetArch]uint64{
+			OSLinux:   {ArchAMD64: 35, ArchARM64: 101, ArchRISCV64: 101},
+			OSFreeBSD: {ArchAMD64: 240},
+		},
+	},
+	{
 		Name: "clock_gettime",
 		Args: 2,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
