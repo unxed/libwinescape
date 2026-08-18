@@ -7,6 +7,9 @@ import (
 )
 
 func TestWriteFile_ReadFile(t *testing.T) {
+	if !Available() {
+		t.Skip("skipping live syscall test: not running in supported Wine environment")
+	}
 	tmpFile := "/tmp/winescape_vfs_test.tmp"
 	defer Unlink(tmpFile)
 
@@ -26,6 +29,9 @@ func TestWriteFile_ReadFile(t *testing.T) {
 }
 
 func TestMkdirAll_RemoveAll(t *testing.T) {
+	if !Available() {
+		t.Skip("skipping live syscall test: not running in supported Wine environment")
+	}
 	tree := "/tmp/winescape_tree_test/sub1/sub2/sub3"
 	defer RemoveAll("/tmp/winescape_tree_test")
 
