@@ -69,6 +69,26 @@ func ClockNanosleep(clockid int, flags int, req *Timespec, rem *Timespec) error 
 func Nanosleep(req *Timespec, rem *Timespec) error {
 	return ClockNanosleep(CLOCK_REALTIME, 0, req, rem)
 }
+// Sleep pauses execution of the calling goroutine for duration d using high-resolution host clock_nanosleep,
+// automatically retrying on EINTR interruptions.
+func Sleep(d time.Duration) error {
+	req := Timespec{
+		Sec:  int64(d / time.Second),
+		Nsec: int64(d % time.Second),
+	}
+	var rem Timespec
+	for {
+		err := ClockNanosleep(CLOCK_MONOTONIC, 0, &req, &rem)
+		if err == nil {
+			return nil
+		}
+		if err == syscall.EINTR {
+			req = rem
+			continue
+		}
+		return err
+	}
+}
 
 // Kill sends signal sig to process pid directly via the host kernel.
 func Kill(pid int, sig int) error {

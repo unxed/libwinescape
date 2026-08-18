@@ -193,7 +193,7 @@ func main() {
 		return nil
 	})
 
-	runTest("High-resolution ClockGettime & Nanosleep", func() error {
+	runTest("High-resolution ClockGettime & Sleep", func() error {
 		var tsStart winescape.Timespec
 		if err := winescape.ClockGettime(winescape.CLOCK_MONOTONIC, &tsStart); err != nil {
 			return fmt.Errorf("ClockGettime error: %w", err)
@@ -202,9 +202,8 @@ func main() {
 			return fmt.Errorf("implausible monotonic time: %+v", tsStart)
 		}
 
-		sleepReq := winescape.Timespec{Sec: 0, Nsec: 10 * 1000 * 1000} // 10ms
-		if err := winescape.Nanosleep(&sleepReq, nil); err != nil {
-			return fmt.Errorf("Nanosleep error: %w", err)
+		if err := winescape.Sleep(15 * time.Millisecond); err != nil {
+			return fmt.Errorf("Sleep error: %w", err)
 		}
 
 		var tsEnd winescape.Timespec
@@ -213,7 +212,7 @@ func main() {
 		}
 
 		deltaNsec := (tsEnd.Sec-tsStart.Sec)*1e9 + (tsEnd.Nsec - tsStart.Nsec)
-		if deltaNsec < 8*1000*1000 { // at least ~8ms elapsed
+		if deltaNsec < 10*1000*1000 { // at least ~10ms elapsed
 			return fmt.Errorf("insufficient elapsed time: %d ns", deltaNsec)
 		}
 		return nil
