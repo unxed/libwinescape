@@ -15,6 +15,20 @@ func TestErrno_Error(t *testing.T) {
 		t.Errorf("expected non-empty string for ENOENT (errno 2)")
 	}
 }
+func TestPOSIX_ErrnoConstants(t *testing.T) {
+	if EINTR != 4 {
+		t.Errorf("expected EINTR == 4, got %d", EINTR)
+	}
+	if ENOENT != 2 {
+		t.Errorf("expected ENOENT == 2, got %d", ENOENT)
+	}
+	if EAGAIN != 11 {
+		t.Errorf("expected EAGAIN == 11, got %d", EAGAIN)
+	}
+	if EINVAL != 22 {
+		t.Errorf("expected EINVAL == 22, got %d", EINVAL)
+	}
+}
 
 func TestSyscallConstants_NonZero(t *testing.T) {
 	if sysWrite != 1 && sysWrite != 4 && sysWrite != 64 {

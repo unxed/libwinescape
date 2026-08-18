@@ -1,7 +1,6 @@
 package winescape
 
 import (
-	"syscall"
 	"time"
 	"unsafe"
 )
@@ -72,7 +71,7 @@ func Nanosleep(req *Timespec, rem *Timespec) error {
 	return ClockNanosleep(CLOCK_REALTIME, 0, req, rem)
 }
 // Sleep pauses execution of the calling goroutine for duration d using high-resolution host clock_nanosleep,
-// automatically retrying on EINTR interruptions.
+// automatically retrying on host signal interruptions (EINTR / ERESTART).
 func Sleep(d time.Duration) error {
 	req := Timespec{
 		Sec:  int64(d / time.Second),
@@ -84,8 +83,10 @@ func Sleep(d time.Duration) error {
 		if err == nil {
 			return nil
 		}
-		if err == syscall.EINTR {
-			req = rem
+		if err == EINTR || err == ERESTART {
+			if rem.Sec > 0 || rem.Nsec > 0 {
+				req = rem
+			}
 			continue
 		}
 		return err
