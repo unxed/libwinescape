@@ -27,3 +27,18 @@ Unlike approaches that try to dynamically link host ELF `.so` libraries (which i
 2. **Syscall Table (Single Source of Truth):** Defined in `spec/table.go`, verified against upstream OS kernel headers. Code generator in `cmd/gen-numbers` generates Go constants and C `#define` headers.
 3. **POSIX Wrappers:** Typed wrappers for standard filesystem operations (`open`, `read`, `write`, `close`, `fstat`, `lseek`, `getdents64`, `unlink`, `rename`, `mkdir`, `readlink`, `access`, etc.).
 4. **Optional Runtime Scheduler Integration (`go/gort`):** Dedicated `LockOSThread` worker pool to prevent Go runtime scheduler starvation during blocking syscalls.
+## Testing & Verification
+
+- **Portable unit tests (any host OS without Wine):**
+  ```bash
+  make test
+  ```
+- **Live POSIX syscall integration tests under Wine:**
+  ```bash
+  make test-wine
+  ```
+- **Standalone raw syscall probe under Wine:**
+  ```bash
+  make probe
+  wine probe/wine_syscall_probe.exe
+  ```
