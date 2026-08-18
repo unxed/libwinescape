@@ -1,0 +1,113 @@
+#include "winescape_fs.h"
+#include "winescape.h"
+#include <errno.h>
+
+int ws_open(const char *path, int flags, unsigned mode) {
+    int err = 0;
+    intptr_t r = ws_syscall6(WS_SYS_OPENAT, (uintptr_t)WS_AT_FDCWD, (uintptr_t)path, (uintptr_t)flags, (uintptr_t)mode, 0, 0, &err);
+    if (r < 0) {
+        errno = err;
+        return -1;
+    }
+    return (int)r;
+}
+
+int ws_close(int fd) {
+    int err = 0;
+    intptr_t r = ws_syscall(WS_SYS_CLOSE, (uintptr_t)fd, 0, 0, &err);
+    if (r < 0) {
+        errno = err;
+        return -1;
+    }
+    return 0;
+}
+
+intptr_t ws_read(int fd, void *buf, size_t count) {
+    int err = 0;
+    intptr_t r = ws_syscall(WS_SYS_READ, (uintptr_t)fd, (uintptr_t)buf, (uintptr_t)count, &err);
+    if (r < 0) {
+        errno = err;
+        return -1;
+    }
+    return r;
+}
+
+intptr_t ws_write(int fd, const void *buf, size_t count) {
+    int err = 0;
+    intptr_t r = ws_syscall(WS_SYS_WRITE, (uintptr_t)fd, (uintptr_t)buf, (uintptr_t)count, &err);
+    if (r < 0) {
+        errno = err;
+        return -1;
+    }
+    return r;
+}
+
+int64_t ws_lseek(int fd, int64_t offset, int whence) {
+    int err = 0;
+    intptr_t r = ws_syscall(WS_SYS_LSEEK, (uintptr_t)fd, (uintptr_t)offset, (uintptr_t)whence, &err);
+    if (r < 0) {
+        errno = err;
+        return -1;
+    }
+    return (int64_t)r;
+}
+
+int ws_unlink(const char *path) {
+    int err = 0;
+    intptr_t r = ws_syscall(WS_SYS_UNLINKAT, (uintptr_t)WS_AT_FDCWD, (uintptr_t)path, 0, &err);
+    if (r < 0) {
+        errno = err;
+        return -1;
+    }
+    return 0;
+}
+
+int ws_rmdir(const char *path) {
+    int err = 0;
+    intptr_t r = ws_syscall(WS_SYS_UNLINKAT, (uintptr_t)WS_AT_FDCWD, (uintptr_t)path, WS_AT_REMOVEDIR, &err);
+    if (r < 0) {
+        errno = err;
+        return -1;
+    }
+    return 0;
+}
+
+int ws_mkdir(const char *path, unsigned mode) {
+    int err = 0;
+    intptr_t r = ws_syscall(WS_SYS_MKDIRAT, (uintptr_t)WS_AT_FDCWD, (uintptr_t)path, (uintptr_t)mode, &err);
+    if (r < 0) {
+        errno = err;
+        return -1;
+    }
+    return 0;
+}
+
+int ws_rename(const char *oldpath, const char *newpath) {
+    int err = 0;
+    intptr_t r = ws_syscall6(WS_SYS_RENAMEAT, (uintptr_t)WS_AT_FDCWD, (uintptr_t)oldpath, (uintptr_t)WS_AT_FDCWD, (uintptr_t)newpath, 0, 0, &err);
+    if (r < 0) {
+        errno = err;
+        return -1;
+    }
+    return 0;
+}
+
+int ws_access(const char *path, unsigned mode) {
+    int err = 0;
+    intptr_t r = ws_syscall6(WS_SYS_FACCESSAT, (uintptr_t)WS_AT_FDCWD, (uintptr_t)path, (uintptr_t)mode, 0, 0, 0, &err);
+    if (r < 0) {
+        errno = err;
+        return -1;
+    }
+    return 0;
+}
+
+int ws_readlink(const char *path, char *buf, size_t bufsiz) {
+    int err = 0;
+    intptr_t r = ws_syscall6(WS_SYS_READLINKAT, (uintptr_t)WS_AT_FDCWD, (uintptr_t)path, (uintptr_t)buf, (uintptr_t)bufsiz, 0, 0, &err);
+    if (r < 0) {
+        errno = err;
+        return -1;
+    }
+    return (int)r;
+}

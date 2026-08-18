@@ -89,11 +89,11 @@ func main() {
 	for _, gf := range goFiles {
 		content := generateGoFile(gf.os, gf.arch)
 		if err := os.MkdirAll(filepath.Dir(gf.path), 0755); err != nil {
-			fmt.Fprintf(stderr(), "mkdir error: %v\n", err)
+			fmt.Fprintf(os.Stderr, "mkdir error: %v\n", err)
 			os.Exit(1)
 		}
 		if err := os.WriteFile(gf.path, []byte(content), 0644); err != nil {
-			fmt.Fprintf(stderr(), "write error for %s: %v\n", gf.path, err)
+			fmt.Fprintf(os.Stderr, "write error for %s: %v\n", gf.path, err)
 			os.Exit(1)
 		}
 		fmt.Printf("Generated %s\n", gf.path)
@@ -101,16 +101,12 @@ func main() {
 
 	cHeaderPath := filepath.Join(rootDir, "c", "include", "winescape_numbers.h")
 	if err := os.MkdirAll(filepath.Dir(cHeaderPath), 0755); err != nil {
-		fmt.Fprintf(stderr(), "mkdir error: %v\n", err)
+		fmt.Fprintf(os.Stderr, "mkdir error: %v\n", err)
 		os.Exit(1)
 	}
 	if err := os.WriteFile(cHeaderPath, []byte(generateCHeader()), 0644); err != nil {
-		fmt.Fprintf(stderr(), "write error for %s: %v\n", cHeaderPath, err)
+		fmt.Fprintf(os.Stderr, "write error for %s: %v\n", cHeaderPath, err)
 		os.Exit(1)
 	}
 	fmt.Printf("Generated %s\n", cHeaderPath)
-}
-
-func stderr() *os.File {
-	return os.Stderr
 }
