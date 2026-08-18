@@ -101,6 +101,67 @@ int ws_access(const char *path, unsigned mode) {
     }
     return 0;
 }
+int ws_fchmodat(int dirfd, const char *pathname, unsigned mode, int flags) {
+    int err = 0;
+    intptr_t r = ws_syscall6(WS_SYS_FCHMODAT, (uintptr_t)dirfd, (uintptr_t)pathname, (uintptr_t)mode, (uintptr_t)flags, 0, 0, &err);
+    if (r < 0) {
+        errno = err;
+        return -1;
+    }
+    return 0;
+}
+
+int ws_chmod(const char *pathname, unsigned mode) {
+    return ws_fchmodat(WS_AT_FDCWD, pathname, mode, 0);
+}
+
+int ws_fchownat(int dirfd, const char *pathname, int uid, int gid, int flags) {
+    int err = 0;
+    intptr_t r = ws_syscall6(WS_SYS_FCHOWNAT, (uintptr_t)dirfd, (uintptr_t)pathname, (uintptr_t)uid, (uintptr_t)gid, (uintptr_t)flags, 0, &err);
+    if (r < 0) {
+        errno = err;
+        return -1;
+    }
+    return 0;
+}
+
+int ws_chown(const char *pathname, int uid, int gid) {
+    return ws_fchownat(WS_AT_FDCWD, pathname, uid, gid, 0);
+}
+
+int ws_utimensat(int dirfd, const char *pathname, const void *times, int flags) {
+    int err = 0;
+    intptr_t r = ws_syscall6(WS_SYS_UTIMENSAT, (uintptr_t)dirfd, (uintptr_t)pathname, (uintptr_t)times, (uintptr_t)flags, 0, 0, &err);
+    if (r < 0) {
+        errno = err;
+        return -1;
+    }
+    return 0;
+}
+
+int ws_ftruncate(int fd, int64_t length) {
+    int err = 0;
+    intptr_t r = ws_syscall(WS_SYS_FTRUNCATE, (uintptr_t)fd, (uintptr_t)length, 0, &err);
+    if (r < 0) {
+        errno = err;
+        return -1;
+    }
+    return 0;
+}
+
+int ws_symlinkat(const char *target, int newdirfd, const char *linkpath) {
+    int err = 0;
+    intptr_t r = ws_syscall(WS_SYS_SYMLINKAT, (uintptr_t)target, (uintptr_t)newdirfd, (uintptr_t)linkpath, &err);
+    if (r < 0) {
+        errno = err;
+        return -1;
+    }
+    return 0;
+}
+
+int ws_symlink(const char *target, const char *linkpath) {
+    return ws_symlinkat(target, WS_AT_FDCWD, linkpath);
+}
 
 int ws_readlink(const char *path, char *buf, size_t bufsiz) {
     int err = 0;

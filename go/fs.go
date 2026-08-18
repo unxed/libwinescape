@@ -3,6 +3,7 @@ package winescape
 import (
 	"encoding/binary"
 	"syscall"
+	"time"
 	"unsafe"
 )
 
@@ -194,6 +195,15 @@ func (f *File) Stat() (*Stat_t, error) {
 	}
 	return &st, nil
 }
+// Truncate changes the size of the open file.
+func (f *File) Truncate(size int64) error {
+	return Ftruncate(f.fd, size)
+}
+
+// Chmod changes the mode of the file.
+func (f *File) Chmod(mode uint32) error {
+	return Chmod(f.name, mode)
+}
 
 // ReadDir reads the directory named by path and returns all directory entries using chunked getdents64.
 func ReadDir(path string) ([]Dirent, error) {
@@ -314,6 +324,98 @@ func Seek(fd int, offset int64, whence int) (int64, error) {
 		return 0, err
 	}
 	return int64(r1), nil
+}
+// Ftruncate truncates open file descriptor fd to length bytes.
+func Ftruncate(fd int, length int64) error {
+	_, _, err := Syscall(sysFtruncate, uintptr(fd), uintptr(length), 0)
+	return err
+}
+
+// Truncate changes the size of the named file.
+func Truncate(path string, length int64) error {
+	fd, err := Open(path, O_WRONLY, 0)
+	if err != nil {
+		return err
+	}
+	defer Close(fd)
+	return Ftruncate(fd, length)
+}
+
+// Fchmodat changes permissions of path relative to dirfd.
+func Fchmodat(dirfd int, path string, mode uint32, flags int) error {
+	p, err := BytePtrFromString(ToUnixPath(path))
+	if err != nil {
+		return err
+	}
+	_, _, errSys := Syscall6(sysFchmodat, uintptr(dirfd), uintptr(unsafe.Pointer(p)), uintptr(mode), uintptr(flags), 0, 0)
+	return errSys
+}
+
+// Chmod changes the permissions of the named file.
+func Chmod(path string, mode uint32) error {
+	return Fchmodat(AT_FDCWD, path, mode, 0)
+}
+
+// Fchownat changes ownership of path relative to dirfd.
+func Fchownat(dirfd int, path string, uid, gid int, flags int) error {
+	p, err := BytePtrFromString(ToUnixPath(path))
+	if err != nil {
+		return err
+	}
+	_, _, errSys := Syscall6(sysFchownat, uintptr(dirfd), uintptr(unsafe.Pointer(p)), uintptr(uid), uintptr(gid), uintptr(flags), 0)
+	return errSys
+}
+
+// Chown changes the numeric uid and gid of the named file.
+func Chown(path string, uid, gid int) error {
+	return Fchownat(AT_FDCWD, path, uid, gid, 0)
+}
+
+// Lchown changes the numeric uid and gid of the named file without following symlinks.
+func Lchown(path string, uid, gid int) error {
+	return Fchownat(AT_FDCWD, path, uid, gid, AT_SYMLINK_NOFOLLOW)
+}
+
+// Utimensat sets file access and modification times with nanosecond precision relative to dirfd.
+func Utimensat(dirfd int, path string, times *[2]Timespec, flags int) error {
+	p, err := BytePtrFromString(ToUnixPath(path))
+	if err != nil {
+		return err
+	}
+	var tsPtr uintptr
+	if times != nil {
+		tsPtr = uintptr(unsafe.Pointer(times))
+	}
+	_, _, errSys := Syscall6(sysUtimensat, uintptr(dirfd), uintptr(unsafe.Pointer(p)), tsPtr, uintptr(flags), 0, 0)
+	return errSys
+}
+
+// Chtimes changes the access and modification times of the named file with nanosecond precision.
+func Chtimes(path string, atime, mtime time.Time) error {
+	times := [2]Timespec{
+		{Sec: atime.Unix(), Nsec: int64(atime.Nanosecond())},
+		{Sec: mtime.Unix(), Nsec: int64(mtime.Nanosecond())},
+	}
+	return Utimensat(AT_FDCWD, path, &times, 0)
+}
+
+// Symlinkat creates linkpath as a symbolic link to target relative to newdirfd.
+func Symlinkat(target string, newdirfd int, linkpath string) error {
+	targetP, err := BytePtrFromString(target)
+	if err != nil {
+		return err
+	}
+	linkP, err := BytePtrFromString(ToUnixPath(linkpath))
+	if err != nil {
+		return err
+	}
+	_, _, errSys := Syscall(sysSymlinkat, uintptr(unsafe.Pointer(targetP)), uintptr(newdirfd), uintptr(unsafe.Pointer(linkP)))
+	return errSys
+}
+
+// Symlink creates linkpath as a symbolic link to target.
+func Symlink(target, linkpath string) error {
+	return Symlinkat(target, AT_FDCWD, linkpath)
 }
 
 // Fstat retrieves file status for open fd.

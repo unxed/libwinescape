@@ -100,6 +100,62 @@ func main() {
 		}
 		return nil
 	})
+	runTest("Chmod and Ftruncate live operations", func() error {
+		if err := winescape.Chmod(testFile, 0700); err != nil {
+			return fmt.Errorf("chmod error: %w", err)
+		}
+		var st winescape.Stat_t
+		if err := winescape.Stat(testFile, &st); err != nil {
+			return fmt.Errorf("stat error: %w", err)
+		}
+		if st.Permissions() != 0700 {
+			return fmt.Errorf("permissions mismatch after chmod: 0%o", st.Permissions())
+		}
+
+		if err := winescape.Truncate(testFile, 10); err != nil {
+			return fmt.Errorf("truncate error: %w", err)
+		}
+		if err := winescape.Stat(testFile, &st); err != nil {
+			return fmt.Errorf("stat error: %w", err)
+		}
+		if st.Size != 10 {
+			return fmt.Errorf("size mismatch after truncate: %d != 10", st.Size)
+		}
+		return nil
+	})
+
+	runTest("Symlink and Readlink operations", func() error {
+		linkPath := testFile + ".link"
+		if err := winescape.Symlink(testFile, linkPath); err != nil {
+			return fmt.Errorf("symlink error: %w", err)
+		}
+		defer winescape.Unlink(linkPath)
+
+		buf := make([]byte, 512)
+		n, err := winescape.Readlink(linkPath, buf)
+		if err != nil {
+			return fmt.Errorf("readlink error: %w", err)
+		}
+		if string(buf[:n]) != testFile {
+			return fmt.Errorf("readlink target mismatch: got %q, want %q", string(buf[:n]), testFile)
+		}
+		return nil
+	})
+
+	runTest("Chtimes nanosecond timestamp modification", func() error {
+		targetTime := time.Date(2026, 8, 18, 12, 0, 0, 123456789, time.UTC)
+		if err := winescape.Chtimes(testFile, targetTime, targetTime); err != nil {
+			return fmt.Errorf("chtimes error: %w", err)
+		}
+		var st winescape.Stat_t
+		if err := winescape.Stat(testFile, &st); err != nil {
+			return fmt.Errorf("stat error: %w", err)
+		}
+		if st.Mtim.Sec != targetTime.Unix() || st.Mtim.Nsec != int64(targetTime.Nanosecond()) {
+			return fmt.Errorf("mtime mismatch: sec=%d nsec=%d", st.Mtim.Sec, st.Mtim.Nsec)
+		}
+		return nil
+	})
 
 	runTest("Directory listing (getdents64 /tmp)", func() error {
 		dirFd, err := winescape.Open("/tmp", winescape.O_RDONLY|winescape.O_DIRECTORY, 0)

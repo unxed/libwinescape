@@ -50,6 +50,11 @@
 #define WS_SYS_CLOCK_NANOSLEEP 230
 #define WS_SYS_KILL 62
 #define WS_SYS_WAIT4 61
+#define WS_SYS_FCHMODAT 268
+#define WS_SYS_FCHOWNAT 260
+#define WS_SYS_UTIMENSAT 280
+#define WS_SYS_FTRUNCATE 77
+#define WS_SYS_SYMLINKAT 266
 #elif defined(__linux__) && (defined(__aarch64__) || defined(_M_ARM64))
 #define WS_SYS_READ 63
 #define WS_SYS_WRITE 64
@@ -90,6 +95,11 @@
 #define WS_SYS_CLOCK_NANOSLEEP 115
 #define WS_SYS_KILL 129
 #define WS_SYS_WAIT4 260
+#define WS_SYS_FCHMODAT 53
+#define WS_SYS_FCHOWNAT 54
+#define WS_SYS_UTIMENSAT 88
+#define WS_SYS_FTRUNCATE 46
+#define WS_SYS_SYMLINKAT 36
 #elif defined(__FreeBSD__) && (defined(__x86_64__) || defined(_M_X64))
 #define WS_SYS_READ 3
 #define WS_SYS_WRITE 4
@@ -135,6 +145,11 @@
 #define WS_SYS_CLOCK_NANOSLEEP 244
 #define WS_SYS_KILL 37
 #define WS_SYS_WAIT4 7
+#define WS_SYS_FCHMODAT 490
+#define WS_SYS_FCHOWNAT 491
+#define WS_SYS_UTIMENSAT 547
+#define WS_SYS_FTRUNCATE 480
+#define WS_SYS_SYMLINKAT 504
 #else
 #error "Unsupported host OS / architecture combination for libwinescape"
 #endif

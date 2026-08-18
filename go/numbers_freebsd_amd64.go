@@ -54,4 +54,9 @@ const (
 		sysClockNanosleep  uintptr = 244
 		sysKill            uintptr = 37
 		sysWait4           uintptr = 7
+	sysFchmodat        uintptr = 490
+	sysFchownat        uintptr = 491
+	sysUtimensat       uintptr = 547
+	sysFtruncate       uintptr = 480
+	sysSymlinkat       uintptr = 504
 	)

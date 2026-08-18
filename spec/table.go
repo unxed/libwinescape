@@ -418,4 +418,44 @@ var SyscallTable = []SyscallEntry{
 			OSFreeBSD: {ArchAMD64: 7},
 		},
 	},
+	{
+		Name: "fchmodat",
+		Args: 4,
+		Numbers: map[TargetOS]map[TargetArch]uint64{
+			OSLinux:   {ArchAMD64: 268, ArchARM64: 53, ArchRISCV64: 53},
+			OSFreeBSD: {ArchAMD64: 490},
+		},
+	},
+	{
+		Name: "fchownat",
+		Args: 5,
+		Numbers: map[TargetOS]map[TargetArch]uint64{
+			OSLinux:   {ArchAMD64: 260, ArchARM64: 54, ArchRISCV64: 54},
+			OSFreeBSD: {ArchAMD64: 491},
+		},
+	},
+	{
+		Name: "utimensat",
+		Args: 4,
+		Numbers: map[TargetOS]map[TargetArch]uint64{
+			OSLinux:   {ArchAMD64: 280, ArchARM64: 88, ArchRISCV64: 88},
+			OSFreeBSD: {ArchAMD64: 547},
+		},
+	},
+	{
+		Name: "ftruncate",
+		Args: 2,
+		Numbers: map[TargetOS]map[TargetArch]uint64{
+			OSLinux:   {ArchAMD64: 77, ArchARM64: 46, ArchRISCV64: 46},
+			OSFreeBSD: {ArchAMD64: 480},
+		},
+	},
+	{
+		Name: "symlinkat",
+		Args: 3,
+		Numbers: map[TargetOS]map[TargetArch]uint64{
+			OSLinux:   {ArchAMD64: 266, ArchARM64: 36, ArchRISCV64: 36},
+			OSFreeBSD: {ArchAMD64: 504},
+		},
+	},
 }
