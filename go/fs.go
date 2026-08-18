@@ -232,7 +232,7 @@ func Getpid() (int, error) {
 
 // Openat opens a file relative to dirfd.
 func Openat(dirfd int, path string, flags int, mode uint32) (int, error) {
-	p, err := BytePtrFromString(path)
+	p, err := BytePtrFromString(ToUnixPath(path))
 	if err != nil {
 		return -1, err
 	}
@@ -323,7 +323,7 @@ func Fstat(fd int, stat *Stat_t) error {
 
 // Fstatat retrieves file status relative to dirfd.
 func Fstatat(dirfd int, path string, stat *Stat_t, flags int) error {
-	p, err := BytePtrFromString(path)
+	p, err := BytePtrFromString(ToUnixPath(path))
 	if err != nil {
 		return err
 	}
@@ -347,7 +347,7 @@ func Lstat(path string, stat *Stat_t) error {
 
 // Unlinkat removes a directory entry relative to dirfd.
 func Unlinkat(dirfd int, path string, flags int) error {
-	p, err := BytePtrFromString(path)
+	p, err := BytePtrFromString(ToUnixPath(path))
 	if err != nil {
 		return err
 	}
@@ -367,7 +367,7 @@ func Rmdir(path string) error {
 
 // Mkdirat creates a directory relative to dirfd.
 func Mkdirat(dirfd int, path string, mode uint32) error {
-	p, err := BytePtrFromString(path)
+	p, err := BytePtrFromString(ToUnixPath(path))
 	if err != nil {
 		return err
 	}
@@ -382,11 +382,11 @@ func Mkdir(path string, mode uint32) error {
 
 // Renameat renames a file relative to directory file descriptors.
 func Renameat(olddirfd int, oldpath string, newdirfd int, newpath string) error {
-	oldP, err := BytePtrFromString(oldpath)
+	oldP, err := BytePtrFromString(ToUnixPath(oldpath))
 	if err != nil {
 		return err
 	}
-	newP, err := BytePtrFromString(newpath)
+	newP, err := BytePtrFromString(ToUnixPath(newpath))
 	if err != nil {
 		return err
 	}
@@ -401,7 +401,7 @@ func Rename(oldpath, newpath string) error {
 
 // Readlinkat reads the value of a symbolic link relative to dirfd.
 func Readlinkat(dirfd int, path string, buf []byte) (int, error) {
-	p, err := BytePtrFromString(path)
+	p, err := BytePtrFromString(ToUnixPath(path))
 	if err != nil {
 		return 0, err
 	}
@@ -423,7 +423,7 @@ func Readlink(path string, buf []byte) (int, error) {
 
 // Faccessat checks file accessibility relative to dirfd.
 func Faccessat(dirfd int, path string, mode uint32, flags int) error {
-	p, err := BytePtrFromString(path)
+	p, err := BytePtrFromString(ToUnixPath(path))
 	if err != nil {
 		return err
 	}

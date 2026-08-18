@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"time"
@@ -143,6 +144,81 @@ func main() {
 		var st winescape.Stat_t
 		if err := winescape.Stat(testFile, &st); err == nil {
 			return fmt.Errorf("file still exists after unlink")
+		}
+		return nil
+	})
+
+	runTest("io/fs.FS DirFS and ReadFile", func() error {
+		dfs := winescape.DirFS("/tmp")
+		fn := filepath.Base(testFile) + ".dfs"
+		full := filepath.Join("/tmp", fn)
+		defer winescape.Unlink(full)
+
+		fd, err := winescape.Open(full, winescape.O_WRONLY|winescape.O_CREAT|winescape.O_TRUNC, 0644)
+		if err != nil {
+			return err
+		}
+		winescape.Write(fd, []byte("DirFS test content"))
+		winescape.Close(fd)
+
+		data, err := fs.ReadFile(dfs, fn)
+		if err != nil {
+			return fmt.Errorf("fs.ReadFile error: %w", err)
+		}
+		if string(data) != "DirFS test content" {
+			return fmt.Errorf("data mismatch: %q", string(data))
+		}
+		return nil
+	})
+
+	runTest("Host Pipe2 syscall", func() error {
+		r, w, err := winescape.Pipe2(winescape.O_CLOEXEC)
+		if err != nil {
+			return fmt.Errorf("pipe2 error: %w", err)
+		}
+		defer winescape.Close(r)
+		defer winescape.Close(w)
+
+		msg := []byte("ping through raw host pipe")
+		nw, err := winescape.Write(w, msg)
+		if err != nil || nw != len(msg) {
+			return fmt.Errorf("pipe write error: %w", err)
+		}
+
+		rbuf := make([]byte, 64)
+		nr, err := winescape.Read(r, rbuf)
+		if err != nil {
+			return fmt.Errorf("pipe read error: %w", err)
+		}
+		if string(rbuf[:nr]) != string(msg) {
+			return fmt.Errorf("pipe data mismatch: got %q, want %q", string(rbuf[:nr]), string(msg))
+		}
+		return nil
+	})
+
+	runTest("Host Mmap / Munmap", func() error {
+		fn := testFile + ".mmap"
+		defer winescape.Unlink(fn)
+
+		fd, err := winescape.Open(fn, winescape.O_RDWR|winescape.O_CREAT|winescape.O_TRUNC, 0644)
+		if err != nil {
+			return err
+		}
+		defer winescape.Close(fd)
+
+		msg := []byte("mmap test raw payload")
+		winescape.Write(fd, msg)
+
+		b, err := winescape.Mmap(fd, 0, len(msg), winescape.PROT_READ, winescape.MAP_SHARED)
+		if err != nil {
+			return fmt.Errorf("mmap error: %w", err)
+		}
+		if string(b) != string(msg) {
+			winescape.Munmap(b)
+			return fmt.Errorf("mmap content mismatch: %q", string(b))
+		}
+		if err := winescape.Munmap(b); err != nil {
+			return fmt.Errorf("munmap error: %w", err)
 		}
 		return nil
 	})

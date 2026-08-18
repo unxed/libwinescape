@@ -111,3 +111,42 @@ int ws_readlink(const char *path, char *buf, size_t bufsiz) {
     }
     return (int)r;
 }
+int ws_pipe2(int pipefd[2], int flags) {
+    int err = 0;
+    intptr_t r = ws_syscall(WS_SYS_PIPE2, (uintptr_t)pipefd, (uintptr_t)flags, 0, &err);
+    if (r < 0) {
+        errno = err;
+        return -1;
+    }
+    return 0;
+}
+
+int ws_dup3(int oldfd, int newfd, int flags) {
+    int err = 0;
+    intptr_t r = ws_syscall(WS_SYS_DUP3, (uintptr_t)oldfd, (uintptr_t)newfd, (uintptr_t)flags, 0, &err);
+    if (r < 0) {
+        errno = err;
+        return -1;
+    }
+    return 0;
+}
+
+void *ws_mmap(void *addr, size_t length, int prot, int flags, int fd, int64_t offset) {
+    int err = 0;
+    intptr_t r = ws_syscall6(WS_SYS_MMAP, (uintptr_t)addr, (uintptr_t)length, (uintptr_t)prot, (uintptr_t)flags, (uintptr_t)fd, (uintptr_t)offset, &err);
+    if (r < 0) {
+        errno = err;
+        return (void *)-1;
+    }
+    return (void *)r;
+}
+
+int ws_munmap(void *addr, size_t length) {
+    int err = 0;
+    intptr_t r = ws_syscall(WS_SYS_MUNMAP, (uintptr_t)addr, (uintptr_t)length, 0, &err);
+    if (r < 0) {
+        errno = err;
+        return -1;
+    }
+    return 0;
+}

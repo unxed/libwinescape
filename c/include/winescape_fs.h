@@ -34,6 +34,10 @@ int ws_mkdir(const char *path, unsigned mode);
 int ws_rename(const char *oldpath, const char *newpath);
 int ws_access(const char *path, unsigned mode);
 int ws_readlink(const char *path, char *buf, size_t bufsiz);
+int ws_pipe2(int pipefd[2], int flags);
+int ws_dup3(int oldfd, int newfd, int flags);
+void *ws_mmap(void *addr, size_t length, int prot, int flags, int fd, int64_t offset);
+int ws_munmap(void *addr, size_t length);
 
 #ifdef __cplusplus
 }

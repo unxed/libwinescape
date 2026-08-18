@@ -233,8 +233,40 @@ var SyscallTable = []SyscallEntry{
 		Name: "faccessat",
 		Args: 4,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
-			OSLinux:   {ArchAMD64: 269, ArchARM64: 48},
+			OSLinux:   {ArchAMD64: 269, ArchARM64: 48, ArchRISCV64: 48},
 			OSFreeBSD: {ArchAMD64: 489},
+		},
+	},
+	{
+		Name: "pipe2",
+		Args: 2,
+		Numbers: map[TargetOS]map[TargetArch]uint64{
+			OSLinux:   {ArchAMD64: 293, ArchARM64: 59, ArchRISCV64: 59},
+			OSFreeBSD: {ArchAMD64: 538},
+		},
+	},
+	{
+		Name: "dup3",
+		Args: 3,
+		Numbers: map[TargetOS]map[TargetArch]uint64{
+			OSLinux:   {ArchAMD64: 292, ArchARM64: 24, ArchRISCV64: 24},
+			OSFreeBSD: {ArchAMD64: 545},
+		},
+	},
+	{
+		Name: "mmap",
+		Args: 6,
+		Numbers: map[TargetOS]map[TargetArch]uint64{
+			OSLinux:   {ArchAMD64: 9, ArchARM64: 222, ArchRISCV64: 222},
+			OSFreeBSD: {ArchAMD64: 477},
+		},
+	},
+	{
+		Name: "munmap",
+		Args: 2,
+		Numbers: map[TargetOS]map[TargetArch]uint64{
+			OSLinux:   {ArchAMD64: 11, ArchARM64: 215, ArchRISCV64: 215},
+			OSFreeBSD: {ArchAMD64: 73},
 		},
 	},
 }

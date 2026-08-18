@@ -29,6 +29,10 @@ const (
 	sysFstatat       uintptr = 552
 	sysUnlinkat      uintptr = 503
 	sysRenameat      uintptr = 501
-	sysReadlinkat    uintptr = 505
-	sysFaccessat     uintptr = 489
-)
+		sysReadlinkat    uintptr = 505
+		sysFaccessat     uintptr = 489
+		sysPipe2         uintptr = 538
+		sysDup3          uintptr = 545
+		sysMmap          uintptr = 477
+		sysMunmap        uintptr = 73
+	)
