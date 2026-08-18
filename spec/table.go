@@ -261,113 +261,153 @@ var SyscallTable = []SyscallEntry{
 			OSFreeBSD: {ArchAMD64: 477},
 		},
 	},
-		{
-			Name: "munmap",
-			Args: 2,
-			Numbers: map[TargetOS]map[TargetArch]uint64{
-				OSLinux:   {ArchAMD64: 11, ArchARM64: 215, ArchRISCV64: 215},
-				OSFreeBSD: {ArchAMD64: 73},
-			},
+	{
+		Name: "munmap",
+		Args: 2,
+		Numbers: map[TargetOS]map[TargetArch]uint64{
+			OSLinux:   {ArchAMD64: 11, ArchARM64: 215, ArchRISCV64: 215},
+			OSFreeBSD: {ArchAMD64: 73},
 		},
-		{
-			Name: "inotify_init1",
-			Args: 1,
-			Numbers: map[TargetOS]map[TargetArch]uint64{
-				OSLinux: {ArchAMD64: 294, ArchARM64: 26, ArchRISCV64: 26},
-			},
+	},
+	{
+		Name: "inotify_init1",
+		Args: 1,
+		Numbers: map[TargetOS]map[TargetArch]uint64{
+			OSLinux: {ArchAMD64: 294, ArchARM64: 26, ArchRISCV64: 26},
 		},
-		{
-			Name: "inotify_add_watch",
-			Args: 3,
-			Numbers: map[TargetOS]map[TargetArch]uint64{
-				OSLinux: {ArchAMD64: 254, ArchARM64: 27, ArchRISCV64: 27},
-			},
+	},
+	{
+		Name: "inotify_add_watch",
+		Args: 3,
+		Numbers: map[TargetOS]map[TargetArch]uint64{
+			OSLinux: {ArchAMD64: 254, ArchARM64: 27, ArchRISCV64: 27},
 		},
-		{
-			Name: "inotify_rm_watch",
-			Args: 2,
-			Numbers: map[TargetOS]map[TargetArch]uint64{
-				OSLinux: {ArchAMD64: 255, ArchARM64: 28, ArchRISCV64: 28},
-			},
+	},
+	{
+		Name: "inotify_rm_watch",
+		Args: 2,
+		Numbers: map[TargetOS]map[TargetArch]uint64{
+			OSLinux: {ArchAMD64: 255, ArchARM64: 28, ArchRISCV64: 28},
 		},
-		{
-			Name: "getuid",
-			Args: 0,
-			Numbers: map[TargetOS]map[TargetArch]uint64{
-				OSLinux:   {ArchAMD64: 102, ArchARM64: 174, ArchRISCV64: 174},
-				OSFreeBSD: {ArchAMD64: 24},
-			},
+	},
+	{
+		Name: "getuid",
+		Args: 0,
+		Numbers: map[TargetOS]map[TargetArch]uint64{
+			OSLinux:   {ArchAMD64: 102, ArchARM64: 174, ArchRISCV64: 174},
+			OSFreeBSD: {ArchAMD64: 24},
 		},
-		{
-			Name: "getgid",
-			Args: 0,
-			Numbers: map[TargetOS]map[TargetArch]uint64{
-				OSLinux:   {ArchAMD64: 104, ArchARM64: 176, ArchRISCV64: 176},
-				OSFreeBSD: {ArchAMD64: 47},
-			},
+	},
+	{
+		Name: "getgid",
+		Args: 0,
+		Numbers: map[TargetOS]map[TargetArch]uint64{
+			OSLinux:   {ArchAMD64: 104, ArchARM64: 176, ArchRISCV64: 176},
+			OSFreeBSD: {ArchAMD64: 47},
 		},
-		{
-			Name: "geteuid",
-			Args: 0,
-			Numbers: map[TargetOS]map[TargetArch]uint64{
-				OSLinux:   {ArchAMD64: 107, ArchARM64: 175, ArchRISCV64: 175},
-				OSFreeBSD: {ArchAMD64: 25},
-			},
+	},
+	{
+		Name: "geteuid",
+		Args: 0,
+		Numbers: map[TargetOS]map[TargetArch]uint64{
+			OSLinux:   {ArchAMD64: 107, ArchARM64: 175, ArchRISCV64: 175},
+			OSFreeBSD: {ArchAMD64: 25},
 		},
-		{
-			Name: "getegid",
-			Args: 0,
-			Numbers: map[TargetOS]map[TargetArch]uint64{
-				OSLinux:   {ArchAMD64: 108, ArchARM64: 177, ArchRISCV64: 177},
-				OSFreeBSD: {ArchAMD64: 43},
-			},
+	},
+	{
+		Name: "getegid",
+		Args: 0,
+		Numbers: map[TargetOS]map[TargetArch]uint64{
+			OSLinux:   {ArchAMD64: 108, ArchARM64: 177, ArchRISCV64: 177},
+			OSFreeBSD: {ArchAMD64: 43},
 		},
-			{
-				Name: "getppid",
-				Args: 0,
-				Numbers: map[TargetOS]map[TargetArch]uint64{
-					OSLinux:   {ArchAMD64: 110, ArchARM64: 173, ArchRISCV64: 173},
-					OSFreeBSD: {ArchAMD64: 39},
-				},
-			},
-			{
-				Name: "socket",
-				Args: 3,
-				Numbers: map[TargetOS]map[TargetArch]uint64{
-					OSLinux:   {ArchAMD64: 41, ArchARM64: 198, ArchRISCV64: 198},
-					OSFreeBSD: {ArchAMD64: 97},
-				},
-			},
-			{
-				Name: "connect",
-				Args: 3,
-				Numbers: map[TargetOS]map[TargetArch]uint64{
-					OSLinux:   {ArchAMD64: 42, ArchARM64: 203, ArchRISCV64: 203},
-					OSFreeBSD: {ArchAMD64: 98},
-				},
-			},
-			{
-				Name: "bind",
-				Args: 3,
-				Numbers: map[TargetOS]map[TargetArch]uint64{
-					OSLinux:   {ArchAMD64: 49, ArchARM64: 200, ArchRISCV64: 200},
-					OSFreeBSD: {ArchAMD64: 104},
-				},
-			},
-			{
-				Name: "listen",
-				Args: 2,
-				Numbers: map[TargetOS]map[TargetArch]uint64{
-					OSLinux:   {ArchAMD64: 50, ArchARM64: 201, ArchRISCV64: 201},
-					OSFreeBSD: {ArchAMD64: 106},
-				},
-			},
-			{
-				Name: "accept4",
-				Args: 4,
-				Numbers: map[TargetOS]map[TargetArch]uint64{
-					OSLinux:   {ArchAMD64: 288, ArchARM64: 242, ArchRISCV64: 242},
-					OSFreeBSD: {ArchAMD64: 541},
-				},
-			},
-		}
+	},
+	{
+		Name: "getppid",
+		Args: 0,
+		Numbers: map[TargetOS]map[TargetArch]uint64{
+			OSLinux:   {ArchAMD64: 110, ArchARM64: 173, ArchRISCV64: 173},
+			OSFreeBSD: {ArchAMD64: 39},
+		},
+	},
+	{
+		Name: "socket",
+		Args: 3,
+		Numbers: map[TargetOS]map[TargetArch]uint64{
+			OSLinux:   {ArchAMD64: 41, ArchARM64: 198, ArchRISCV64: 198},
+			OSFreeBSD: {ArchAMD64: 97},
+		},
+	},
+	{
+		Name: "connect",
+		Args: 3,
+		Numbers: map[TargetOS]map[TargetArch]uint64{
+			OSLinux:   {ArchAMD64: 42, ArchARM64: 203, ArchRISCV64: 203},
+			OSFreeBSD: {ArchAMD64: 98},
+		},
+	},
+	{
+		Name: "bind",
+		Args: 3,
+		Numbers: map[TargetOS]map[TargetArch]uint64{
+			OSLinux:   {ArchAMD64: 49, ArchARM64: 200, ArchRISCV64: 200},
+			OSFreeBSD: {ArchAMD64: 104},
+		},
+	},
+	{
+		Name: "listen",
+		Args: 2,
+		Numbers: map[TargetOS]map[TargetArch]uint64{
+			OSLinux:   {ArchAMD64: 50, ArchARM64: 201, ArchRISCV64: 201},
+			OSFreeBSD: {ArchAMD64: 106},
+		},
+	},
+	{
+		Name: "accept4",
+		Args: 4,
+		Numbers: map[TargetOS]map[TargetArch]uint64{
+			OSLinux:   {ArchAMD64: 288, ArchARM64: 242, ArchRISCV64: 242},
+			OSFreeBSD: {ArchAMD64: 541},
+		},
+	},
+	{
+		Name: "ioctl",
+		Args: 3,
+		Numbers: map[TargetOS]map[TargetArch]uint64{
+			OSLinux:   {ArchAMD64: 16, ArchARM64: 29, ArchRISCV64: 29},
+			OSFreeBSD: {ArchAMD64: 54},
+		},
+	},
+	{
+		Name: "nanosleep",
+		Args: 2,
+		Numbers: map[TargetOS]map[TargetArch]uint64{
+			OSLinux:   {ArchAMD64: 35, ArchARM64: 101, ArchRISCV64: 101},
+			OSFreeBSD: {ArchAMD64: 240},
+		},
+	},
+	{
+		Name: "clock_gettime",
+		Args: 2,
+		Numbers: map[TargetOS]map[TargetArch]uint64{
+			OSLinux:   {ArchAMD64: 228, ArchARM64: 113, ArchRISCV64: 113},
+			OSFreeBSD: {ArchAMD64: 232},
+		},
+	},
+	{
+		Name: "kill",
+		Args: 2,
+		Numbers: map[TargetOS]map[TargetArch]uint64{
+			OSLinux:   {ArchAMD64: 62, ArchARM64: 129, ArchRISCV64: 129},
+			OSFreeBSD: {ArchAMD64: 37},
+		},
+	},
+	{
+		Name: "wait4",
+		Args: 4,
+		Numbers: map[TargetOS]map[TargetArch]uint64{
+			OSLinux:   {ArchAMD64: 61, ArchARM64: 260, ArchRISCV64: 260},
+			OSFreeBSD: {ArchAMD64: 7},
+		},
+	},
+}

@@ -204,3 +204,52 @@ int ws_getppid(void) {
     int err = 0;
     return (int)ws_syscall(WS_SYS_GETPPID, 0, 0, 0, &err);
 }
+int ws_ioctl(int fd, unsigned long req, void *arg) {
+    int err = 0;
+    intptr_t r = ws_syscall(WS_SYS_IOCTL, (uintptr_t)fd, (uintptr_t)req, (uintptr_t)arg, &err);
+    if (r < 0) {
+        errno = err;
+        return -1;
+    }
+    return (int)r;
+}
+
+int ws_clock_gettime(int clockid, void *ts) {
+    int err = 0;
+    intptr_t r = ws_syscall(WS_SYS_CLOCK_GETTIME, (uintptr_t)clockid, (uintptr_t)ts, 0, &err);
+    if (r < 0) {
+        errno = err;
+        return -1;
+    }
+    return 0;
+}
+
+int ws_nanosleep(const void *req, void *rem) {
+    int err = 0;
+    intptr_t r = ws_syscall(WS_SYS_NANOSLEEP, (uintptr_t)req, (uintptr_t)rem, 0, &err);
+    if (r < 0) {
+        errno = err;
+        return -1;
+    }
+    return 0;
+}
+
+int ws_kill(int pid, int sig) {
+    int err = 0;
+    intptr_t r = ws_syscall(WS_SYS_KILL, (uintptr_t)pid, (uintptr_t)sig, 0, &err);
+    if (r < 0) {
+        errno = err;
+        return -1;
+    }
+    return 0;
+}
+
+int ws_wait4(int pid, int *status, int options, void *rusage) {
+    int err = 0;
+    intptr_t r = ws_syscall6(WS_SYS_WAIT4, (uintptr_t)pid, (uintptr_t)status, (uintptr_t)options, (uintptr_t)rusage, 0, 0, &err);
+    if (r < 0) {
+        errno = err;
+        return -1;
+    }
+    return (int)r;
+}

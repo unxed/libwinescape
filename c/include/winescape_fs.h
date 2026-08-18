@@ -46,6 +46,11 @@ int ws_getgid(void);
 int ws_geteuid(void);
 int ws_getegid(void);
 int ws_getppid(void);
+int ws_ioctl(int fd, unsigned long req, void *arg);
+int ws_clock_gettime(int clockid, void *ts);
+int ws_nanosleep(const void *req, void *rem);
+int ws_kill(int pid, int sig);
+int ws_wait4(int pid, int *status, int options, void *rusage);
 
 #ifdef __cplusplus
 }

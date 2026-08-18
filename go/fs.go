@@ -85,6 +85,7 @@ func BytePtrFromString(s string) (*byte, error) {
 	b[len(s)] = 0
 	return &b[0], nil
 }
+
 // ToUnixPath normalizes DOS/Wine paths (e.g. "Z:\foo\bar", "\\?\unix\foo\bar", "\??\unix\foo\bar")
 // into canonical UNIX paths ("/foo/bar") via pure string operations without syscall overhead.
 func ToUnixPath(path string) string {

@@ -182,6 +182,43 @@ func main() {
 		return nil
 	})
 
+	runTest("Process signaling (kill with sig=0 probe)", func() error {
+		pid, err := winescape.Getpid()
+		if err != nil {
+			return err
+		}
+		if err := winescape.Kill(pid, 0); err != nil {
+			return fmt.Errorf("kill(pid, 0) failed: %w", err)
+		}
+		return nil
+	})
+
+	runTest("High-resolution ClockGettime & Nanosleep", func() error {
+		var tsStart winescape.Timespec
+		if err := winescape.ClockGettime(winescape.CLOCK_MONOTONIC, &tsStart); err != nil {
+			return fmt.Errorf("ClockGettime error: %w", err)
+		}
+		if tsStart.Sec <= 0 && tsStart.Nsec <= 0 {
+			return fmt.Errorf("implausible monotonic time: %+v", tsStart)
+		}
+
+		sleepReq := winescape.Timespec{Sec: 0, Nsec: 10 * 1000 * 1000} // 10ms
+		if err := winescape.Nanosleep(&sleepReq, nil); err != nil {
+			return fmt.Errorf("Nanosleep error: %w", err)
+		}
+
+		var tsEnd winescape.Timespec
+		if err := winescape.ClockGettime(winescape.CLOCK_MONOTONIC, &tsEnd); err != nil {
+			return fmt.Errorf("ClockGettime end error: %w", err)
+		}
+
+		deltaNsec := (tsEnd.Sec-tsStart.Sec)*1e9 + (tsEnd.Nsec - tsStart.Nsec)
+		if deltaNsec < 8*1000*1000 { // at least ~8ms elapsed
+			return fmt.Errorf("insufficient elapsed time: %d ns", deltaNsec)
+		}
+		return nil
+	})
+
 	runTest("Host Pipe2 syscall", func() error {
 		r, w, err := winescape.Pipe2(winescape.O_CLOEXEC)
 		if err != nil {

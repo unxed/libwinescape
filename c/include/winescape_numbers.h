@@ -44,6 +44,11 @@
 #define WS_SYS_BIND 49
 #define WS_SYS_LISTEN 50
 #define WS_SYS_ACCEPT4 288
+#define WS_SYS_IOCTL 16
+#define WS_SYS_NANOSLEEP 35
+#define WS_SYS_CLOCK_GETTIME 228
+#define WS_SYS_KILL 62
+#define WS_SYS_WAIT4 61
 #elif defined(__linux__) && (defined(__aarch64__) || defined(_M_ARM64))
 #define WS_SYS_READ 63
 #define WS_SYS_WRITE 64
@@ -78,6 +83,11 @@
 #define WS_SYS_BIND 200
 #define WS_SYS_LISTEN 201
 #define WS_SYS_ACCEPT4 242
+#define WS_SYS_IOCTL 29
+#define WS_SYS_NANOSLEEP 101
+#define WS_SYS_CLOCK_GETTIME 113
+#define WS_SYS_KILL 129
+#define WS_SYS_WAIT4 260
 #elif defined(__FreeBSD__) && (defined(__x86_64__) || defined(_M_X64))
 #define WS_SYS_READ 3
 #define WS_SYS_WRITE 4
@@ -117,6 +127,11 @@
 #define WS_SYS_BIND 104
 #define WS_SYS_LISTEN 106
 #define WS_SYS_ACCEPT4 541
+#define WS_SYS_IOCTL 54
+#define WS_SYS_NANOSLEEP 240
+#define WS_SYS_CLOCK_GETTIME 232
+#define WS_SYS_KILL 37
+#define WS_SYS_WAIT4 7
 #else
 #error "Unsupported host OS / architecture combination for libwinescape"
 #endif
