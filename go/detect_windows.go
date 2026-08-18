@@ -3,6 +3,7 @@
 package winescape
 
 import (
+	"strings"
 	"syscall"
 	"unsafe"
 )
@@ -79,9 +80,9 @@ func Available() bool {
 		availableChecked = true
 		return false
 	}
-	os := HostOS()
+	os := strings.ToLower(HostOS())
 	// Raw kernel traps from PE code are supported on Linux and FreeBSD hosts
-	availableCached = (os == "linux" || os == "freebsd" || os == "GNU/Linux")
+	availableCached = (os == "linux" || os == "gnu/linux" || os == "freebsd")
 	availableChecked = true
 	return availableCached
 }
