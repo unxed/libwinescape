@@ -12,8 +12,16 @@ func (e Errno) Error() string {
 	return syscall.Errno(e).Error()
 }
 
+var (
+	// ErrUnavailable is returned when calling raw syscalls on native Windows or an unsupported host OS.
+	ErrUnavailable = syscall.ENOSYS
+)
+
 // Syscall6 issues a raw 6-argument system call to the underlying host kernel.
 func Syscall6(nr, a1, a2, a3, a4, a5, a6 uintptr) (r1, r2 uintptr, err error) {
+	if !Available() {
+		return 0, 0, ErrUnavailable
+	}
 	r1, r2, errno := syscall6_raw(nr, a1, a2, a3, a4, a5, a6)
 	if errno != 0 {
 		return r1, r2, Errno(errno)

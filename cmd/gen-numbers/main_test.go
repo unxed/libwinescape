@@ -8,7 +8,7 @@ import (
 )
 
 func TestGenerateGoFile_LinuxAMD64(t *testing.T) {
-	out := generateGoFile(spec.OSLinux, spec.ArchAMD64, "linux && amd64")
+	out := generateGoFile(spec.OSLinux, spec.ArchAMD64, "(!winescape_freebsd && windows && amd64) || (linux && amd64)")
 	if !strings.Contains(out, "package winescape") {
 		t.Errorf("missing package statement in generated Go file")
 	}

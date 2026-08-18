@@ -7,8 +7,9 @@ const (
 	OSLinux   TargetOS = "linux"
 	OSFreeBSD TargetOS = "freebsd"
 
-	ArchAMD64 TargetArch = "amd64"
-	ArchARM64 TargetArch = "arm64"
+	ArchAMD64   TargetArch = "amd64"
+	ArchARM64   TargetArch = "arm64"
+	ArchRISCV64 TargetArch = "riscv64"
 )
 
 type SyscallEntry struct {

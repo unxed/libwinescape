@@ -13,6 +13,9 @@ import (
 
 func main() {
 	fmt.Println("=== libwinescape End-to-End Integration Test Suite ===")
+	fmt.Printf("Environment: IsWine=%v HostOS=%q Available=%v\n\n",
+		winescape.IsWine(), winescape.HostOS(), winescape.Available())
+
 	passed := 0
 	failed := 0
 

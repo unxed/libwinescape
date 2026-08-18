@@ -87,8 +87,8 @@ func main() {
 		buildTag string
 		path     string
 	}{
-		{spec.OSLinux, spec.ArchAMD64, "(!winescape_freebsd && windows && amd64) || (linux && amd64)", filepath.Join(rootDir, "go", "numbers_linux_amd64.go")},
-		{spec.OSLinux, spec.ArchARM64, "(!winescape_freebsd && windows && arm64) || (linux && arm64)", filepath.Join(rootDir, "go", "numbers_linux_arm64.go")},
+		{spec.OSLinux, spec.ArchAMD64, "(!winescape_freebsd && windows && amd64) || (linux && amd64)", filepath.Join(rootDir, "go", "numbers_amd64.go")},
+		{spec.OSLinux, spec.ArchARM64, "(!winescape_freebsd && windows && arm64) || (linux && arm64)", filepath.Join(rootDir, "go", "numbers_arm64.go")},
 		{spec.OSFreeBSD, spec.ArchAMD64, "(winescape_freebsd && windows && amd64) || (freebsd && amd64)", filepath.Join(rootDir, "go", "numbers_freebsd_amd64.go")},
 		{"fallback", "fallback", "(!windows && !linux && !freebsd) || (!amd64 && !arm64)", filepath.Join(rootDir, "go", "numbers_fallback.go")},
 	}
