@@ -14,3 +14,42 @@ For operations that may block or when strict scheduler isolation is required, `l
 - A worker pool of goroutines bound to OS threads via `runtime.LockOSThread()`.
 - Explicit bounded concurrency.
 - Pure Go implementation without cgo.
+
+## Usage Example
+
+```go
+package main
+
+import (
+	"fmt"
+	"log"
+
+	"github.com/unxed/libwinescape/go"
+	"github.com/unxed/libwinescape/go/gort"
+)
+
+func main() {
+	// Create a worker pool with 4 OS-thread-locked workers
+	pool := gort.NewPool(gort.WithWorkers(4))
+	defer pool.Close()
+
+	// Execute a filesystem call safely inside the worker pool
+	fd, err := gort.RunInPool(pool, func() (int, error) {
+		return winescape.Open("/etc/hosts", winescape.O_RDONLY, 0)
+	})
+	if err != nil {
+		log.Fatalf("Failed to open file: %v", err)
+	}
+	defer winescape.Close(fd)
+
+	buf := make([]byte, 128)
+	n, err := gort.RunInPool(pool, func() (int, error) {
+		return winescape.Read(fd, buf)
+	})
+	if err != nil {
+		log.Fatalf("Failed to read file: %v", err)
+	}
+
+	fmt.Printf("Read %d bytes: %s\n", n, string(buf[:n]))
+}
+```
