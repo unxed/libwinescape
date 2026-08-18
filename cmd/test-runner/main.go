@@ -175,6 +175,49 @@ func main() {
 		}
 		return nil
 	})
+	runTest("High-level VFS MkdirAll, WriteFile, ReadFile, CopyFile, RemoveAll", func() error {
+		tree := "/tmp/winescape_vfs_live_tree/a/b/c"
+		defer winescape.RemoveAll("/tmp/winescape_vfs_live_tree")
+
+		if err := winescape.MkdirAll(tree, 0755); err != nil {
+			return fmt.Errorf("MkdirAll error: %w", err)
+		}
+
+		srcFile := filepath.Join(tree, "test.src")
+		data := []byte("libwinescape VFS high-level copy & readback verification")
+		if err := winescape.WriteFile(srcFile, data, 0644); err != nil {
+			return fmt.Errorf("WriteFile error: %w", err)
+		}
+
+		dstFile := filepath.Join(tree, "test.dst")
+		if err := winescape.CopyFile(srcFile, dstFile); err != nil {
+			return fmt.Errorf("CopyFile error: %w", err)
+		}
+
+		readDst, err := winescape.ReadFile(dstFile)
+		if err != nil {
+			return fmt.Errorf("ReadFile dst error: %w", err)
+		}
+		if !bytes.Equal(readDst, data) {
+			return fmt.Errorf("copied content mismatch: got %q, want %q", string(readDst), string(data))
+		}
+
+		tf, err := winescape.CreateTemp(tree, "tmp_*.dat")
+		if err != nil {
+			return fmt.Errorf("CreateTemp error: %w", err)
+		}
+		tf.Close()
+
+		if err := winescape.RemoveAll("/tmp/winescape_vfs_live_tree"); err != nil {
+			return fmt.Errorf("RemoveAll error: %w", err)
+		}
+
+		var st winescape.Stat_t
+		if err := winescape.Stat("/tmp/winescape_vfs_live_tree", &st); err == nil {
+			return fmt.Errorf("expected tree to be completely removed")
+		}
+		return nil
+	})
 	runTest("HostEnviron direct /proc/self/environ reading", func() error {
 		envs, err := winescape.HostEnviron()
 		if err != nil {

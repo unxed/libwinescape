@@ -201,6 +201,43 @@ int ws_fstatfs(int fd, void *buf) {
     }
     return 0;
 }
+int ws_mkdir_all(const char *path, unsigned mode) {
+    if (!path || !*path) return 0;
+    char buf[1024];
+    strncpy(buf, path, sizeof(buf) - 1);
+    buf[sizeof(buf) - 1] = '\0';
+    for (char *p = buf + 1; *p; p++) {
+        if (*p == '/' || *p == '\\') {
+            *p = '\0';
+            ws_mkdir(buf, mode);
+            *p = '/';
+        }
+    }
+    return ws_mkdir(buf, mode);
+}
+
+int ws_remove_all(const char *path) {
+    if (!path || !*path) return 0;
+    if (ws_unlink(path) == 0) return 0;
+    return ws_rmdir(path);
+}
+
+int ws_copy_file(const char *src, const char *dst) {
+    int in = ws_open(src, WS_O_RDONLY | WS_O_CLOEXEC, 0);
+    if (in < 0) return -1;
+    int out = ws_open(dst, WS_O_WRONLY | WS_O_CREAT | WS_O_TRUNC | WS_O_CLOEXEC, 0644);
+    if (out < 0) { ws_close(in); return -1; }
+    char buf[65536];
+    intptr_t n;
+    while ((n = ws_read(in, buf, sizeof(buf))) > 0) {
+        if (ws_write(out, buf, (size_t)n) != n) {
+            ws_close(in); ws_close(out); return -1;
+        }
+    }
+    ws_close(in);
+    ws_close(out);
+    return (n < 0) ? -1 : 0;
+}
 int ws_execve(const char *pathname, char *const argv[], char *const envp[]) {
     int err = 0;
     intptr_t r = ws_syscall(WS_SYS_EXECVE, (uintptr_t)pathname, (uintptr_t)argv, (uintptr_t)envp, &err);
