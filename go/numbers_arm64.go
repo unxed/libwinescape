@@ -41,6 +41,11 @@ const (
 			sysGetuid        uintptr = 174
 			sysGetgid        uintptr = 176
 			sysGeteuid       uintptr = 175
-			sysGetegid       uintptr = 177
-			sysGetppid       uintptr = 173
-		)
+				sysGetegid       uintptr = 177
+				sysGetppid       uintptr = 173
+				sysSocket        uintptr = 198
+				sysConnect       uintptr = 203
+				sysBind          uintptr = 200
+				sysListen        uintptr = 201
+				sysAccept4       uintptr = 242
+			)

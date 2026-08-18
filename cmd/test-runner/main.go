@@ -257,6 +257,61 @@ func main() {
 		return nil
 	})
 
+	runTest("AF_UNIX socket IPC (DialUnix & ListenUnix)", func() error {
+		sockPath := fmt.Sprintf("/tmp/winescape_ipc_%d_%d.sock", os.Getpid(), time.Now().UnixNano())
+		lfd, err := winescape.ListenUnix(sockPath, 5)
+		if err != nil {
+			return fmt.Errorf("ListenUnix error: %w", err)
+		}
+		defer winescape.Close(lfd)
+		defer winescape.Unlink(sockPath)
+
+		errChan := make(chan error, 1)
+		msg := []byte("hello directly over raw host AF_UNIX socket!")
+
+		go func() {
+			nfd, err := winescape.Accept4(lfd, nil, nil, winescape.SOCK_CLOEXEC)
+			if err != nil {
+				errChan <- fmt.Errorf("Accept4 error: %w", err)
+				return
+			}
+			defer winescape.Close(nfd)
+
+			buf := make([]byte, 128)
+			n, err := winescape.Read(nfd, buf)
+			if err != nil {
+				errChan <- fmt.Errorf("server read error: %w", err)
+				return
+			}
+			if string(buf[:n]) != string(msg) {
+				errChan <- fmt.Errorf("server received mismatch: got %q, want %q", string(buf[:n]), string(msg))
+				return
+			}
+			errChan <- nil
+		}()
+
+		client, err := winescape.DialUnix(sockPath)
+		if err != nil {
+			return fmt.Errorf("DialUnix error: %w", err)
+		}
+		defer client.Close()
+
+		if _, err := client.Write(msg); err != nil {
+			return fmt.Errorf("client write error: %w", err)
+		}
+
+		select {
+		case err := <-errChan:
+			if err != nil {
+				return err
+			}
+		case <-time.After(2 * time.Second):
+			return fmt.Errorf("timeout waiting for AF_UNIX IPC server")
+		}
+
+		return nil
+	})
+
 	runTest("Host Mmap / Munmap", func() error {
 		fn := testFile + ".mmap"
 		defer winescape.Unlink(fn)

@@ -322,12 +322,52 @@ var SyscallTable = []SyscallEntry{
 				OSFreeBSD: {ArchAMD64: 43},
 			},
 		},
-		{
-			Name: "getppid",
-			Args: 0,
-			Numbers: map[TargetOS]map[TargetArch]uint64{
-				OSLinux:   {ArchAMD64: 110, ArchARM64: 173, ArchRISCV64: 173},
-				OSFreeBSD: {ArchAMD64: 39},
+			{
+				Name: "getppid",
+				Args: 0,
+				Numbers: map[TargetOS]map[TargetArch]uint64{
+					OSLinux:   {ArchAMD64: 110, ArchARM64: 173, ArchRISCV64: 173},
+					OSFreeBSD: {ArchAMD64: 39},
+				},
 			},
-		},
-	}
+			{
+				Name: "socket",
+				Args: 3,
+				Numbers: map[TargetOS]map[TargetArch]uint64{
+					OSLinux:   {ArchAMD64: 41, ArchARM64: 198, ArchRISCV64: 198},
+					OSFreeBSD: {ArchAMD64: 97},
+				},
+			},
+			{
+				Name: "connect",
+				Args: 3,
+				Numbers: map[TargetOS]map[TargetArch]uint64{
+					OSLinux:   {ArchAMD64: 42, ArchARM64: 203, ArchRISCV64: 203},
+					OSFreeBSD: {ArchAMD64: 98},
+				},
+			},
+			{
+				Name: "bind",
+				Args: 3,
+				Numbers: map[TargetOS]map[TargetArch]uint64{
+					OSLinux:   {ArchAMD64: 49, ArchARM64: 200, ArchRISCV64: 200},
+					OSFreeBSD: {ArchAMD64: 104},
+				},
+			},
+			{
+				Name: "listen",
+				Args: 2,
+				Numbers: map[TargetOS]map[TargetArch]uint64{
+					OSLinux:   {ArchAMD64: 50, ArchARM64: 201, ArchRISCV64: 201},
+					OSFreeBSD: {ArchAMD64: 106},
+				},
+			},
+			{
+				Name: "accept4",
+				Args: 4,
+				Numbers: map[TargetOS]map[TargetArch]uint64{
+					OSLinux:   {ArchAMD64: 288, ArchARM64: 242, ArchRISCV64: 242},
+					OSFreeBSD: {ArchAMD64: 541},
+				},
+			},
+		}

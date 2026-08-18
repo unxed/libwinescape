@@ -39,6 +39,11 @@
 #define WS_SYS_GETEUID 107
 #define WS_SYS_GETEGID 108
 #define WS_SYS_GETPPID 110
+#define WS_SYS_SOCKET 41
+#define WS_SYS_CONNECT 42
+#define WS_SYS_BIND 49
+#define WS_SYS_LISTEN 50
+#define WS_SYS_ACCEPT4 288
 #elif defined(__linux__) && (defined(__aarch64__) || defined(_M_ARM64))
 #define WS_SYS_READ 63
 #define WS_SYS_WRITE 64
@@ -68,6 +73,11 @@
 #define WS_SYS_GETEUID 175
 #define WS_SYS_GETEGID 177
 #define WS_SYS_GETPPID 173
+#define WS_SYS_SOCKET 198
+#define WS_SYS_CONNECT 203
+#define WS_SYS_BIND 200
+#define WS_SYS_LISTEN 201
+#define WS_SYS_ACCEPT4 242
 #elif defined(__FreeBSD__) && (defined(__x86_64__) || defined(_M_X64))
 #define WS_SYS_READ 3
 #define WS_SYS_WRITE 4
@@ -102,6 +112,11 @@
 #define WS_SYS_GETEUID 25
 #define WS_SYS_GETEGID 43
 #define WS_SYS_GETPPID 39
+#define WS_SYS_SOCKET 97
+#define WS_SYS_CONNECT 98
+#define WS_SYS_BIND 104
+#define WS_SYS_LISTEN 106
+#define WS_SYS_ACCEPT4 541
 #else
 #error "Unsupported host OS / architecture combination for libwinescape"
 #endif
