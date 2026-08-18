@@ -27,6 +27,40 @@ Unlike approaches that try to dynamically link host ELF `.so` libraries (which i
 2. **Syscall Table (Single Source of Truth):** Defined in `spec/table.go`, verified against upstream OS kernel headers. Code generator in `cmd/gen-numbers` generates Go constants and C `#define` headers.
 3. **POSIX Wrappers:** Typed wrappers for standard filesystem operations (`open`, `read`, `write`, `close`, `fstat`, `lseek`, `getdents64`, `unlink`, `rename`, `mkdir`, `readlink`, `access`, etc.).
 4. **Optional Runtime Scheduler Integration (`go/gort`):** Dedicated `LockOSThread` worker pool to prevent Go runtime scheduler starvation during blocking syscalls.
+## API Catalog
+
+- **POSIX File I/O & Metadata:** `Open`, `Openat`, `Read`, `Write`, `Pread`, `Pwrite`, `Seek`, `Close`, `Fstat`, `Fstatat`, `Stat`, `Lstat`, `Unlink`, `Unlinkat`, `Rmdir`, `Mkdir`, `Mkdirat`, `Rename`, `Renameat`, `Symlink`, `Symlinkat`, `Readlink`, `Readlinkat`, `Access`, `Faccessat`, `Chmod`, `Fchmodat`, `Chown`, `Fchownat`, `Lchown`, `Chtimes`, `Utimensat`, `Truncate`, `Ftruncate`.
+- **High-Level VFS Operations:** `ReadFile`, `WriteFile`, `MkdirAll`, `RemoveAll`, `CopyFile` (with in-kernel zero-copy `copy_file_range`), `CreateTemp`, `ToUnixPath` (instant zero-syscall path normalization).
+- **Fast Directory Scanning:** `Getdents64`, `ParseDirent64`, `ReadDir` (chunked 64KB kernel buffer reader).
+- **Standard `io/fs.FS` Integration:** `DirFS(root)` providing `fs.FS`, `fs.StatFS`, `fs.ReadDirFS`, `fs.ReadFileFS`, `FileInfo`, `DirEntry`.
+- **Pipes & Memory Mapping:** `Pipe2`, `Dup3`, `Mmap`, `Munmap`.
+- **Real-Time Linux File Watching:** `InotifyInit1`, `InotifyAddWatch`, `InotifyRmWatch`, `ParseInotifyEvents`.
+- **POSIX Host Identity:** `Getuid`, `Getgid`, `Geteuid`, `Getegid`, `Getppid`.
+- **Process Signals & Control:** `Kill`, `Wait4`, `Execve`.
+- **Terminal Control & Clocks:** `Ioctl`, `GetWinsize` (`TIOCGWINSZ`), `Tcgetattr`, `Tcsetattr`, `MakeRaw`, `ClockGettime`, `ClockNanosleep`, `Sleep` (with automatic signal restart on `EINTR`).
+- **Raw POSIX Networking & IPC:** `Socket`, `Bind`, `Connect`, `Listen`, `Accept4`, `DialUnix`, `ListenUnix` (connect directly to host X11, Wayland, D-Bus, Docker, ssh-agent sockets).
+- **Go Scheduler Isolation (`gort`):** Dedicated `LockOSThread` worker pool (`gort.NewPool()`, `gort.RunInPool()`).
+
+## VFS Integration Example
+
+```go
+package vfs
+
+import (
+	winescape "github.com/unxed/libwinescape/go"
+)
+
+func ReadDirectory(path string) ([]FileItem, error) {
+	if winescape.Available() {
+		// Fast path: bypass wineserver, read directory in bulk via raw getdents64
+		entries, err := winescape.ReadDir(path)
+		if err == nil {
+			return convertEntries(entries), nil
+		}
+	}
+	// Fallback path: standard Windows / Win32 traversal
+	return fallbackReadDirectory(path)
+}
 ## Testing & Verification
 
 - **Portable unit tests (any host OS without Wine):**
