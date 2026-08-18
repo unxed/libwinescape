@@ -490,4 +490,12 @@ var SyscallTable = []SyscallEntry{
 			OSFreeBSD: {ArchAMD64: 397},
 		},
 	},
+	{
+		Name: "execve",
+		Args: 3,
+		Numbers: map[TargetOS]map[TargetArch]uint64{
+			OSLinux:   {ArchAMD64: 59, ArchARM64: 221, ArchRISCV64: 221},
+			OSFreeBSD: {ArchAMD64: 59},
+		},
+	},
 }

@@ -59,6 +59,7 @@
 #define WS_SYS_FLOCK 73
 #define WS_SYS_STATFS 137
 #define WS_SYS_FSTATFS 138
+#define WS_SYS_EXECVE 59
 #elif defined(__linux__) && (defined(__aarch64__) || defined(_M_ARM64))
 #define WS_SYS_READ 63
 #define WS_SYS_WRITE 64
@@ -108,6 +109,7 @@
 #define WS_SYS_FLOCK 32
 #define WS_SYS_STATFS 43
 #define WS_SYS_FSTATFS 44
+#define WS_SYS_EXECVE 221
 #elif defined(__FreeBSD__) && (defined(__x86_64__) || defined(_M_X64))
 #define WS_SYS_READ 3
 #define WS_SYS_WRITE 4
@@ -162,6 +164,7 @@
 #define WS_SYS_FLOCK 131
 #define WS_SYS_STATFS 396
 #define WS_SYS_FSTATFS 397
+#define WS_SYS_EXECVE 59
 #else
 #error "Unsupported host OS / architecture combination for libwinescape"
 #endif

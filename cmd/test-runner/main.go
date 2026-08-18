@@ -175,6 +175,20 @@ func main() {
 		}
 		return nil
 	})
+	runTest("HostEnviron direct /proc/self/environ reading", func() error {
+		envs, err := winescape.HostEnviron()
+		if err != nil {
+			return fmt.Errorf("HostEnviron error: %w", err)
+		}
+		if len(envs) == 0 {
+			return fmt.Errorf("empty host environment from /proc/self/environ")
+		}
+		path := winescape.HostGetenv("PATH")
+		if path == "" {
+			return fmt.Errorf("expected non-empty host PATH variable")
+		}
+		return nil
+	})
 
 	runTest("Symlink and Readlink operations", func() error {
 		linkPath := testFile + ".link"

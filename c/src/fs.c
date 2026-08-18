@@ -201,6 +201,35 @@ int ws_fstatfs(int fd, void *buf) {
     }
     return 0;
 }
+int ws_execve(const char *pathname, char *const argv[], char *const envp[]) {
+    int err = 0;
+    intptr_t r = ws_syscall(WS_SYS_EXECVE, (uintptr_t)pathname, (uintptr_t)argv, (uintptr_t)envp, &err);
+    if (r < 0) {
+        errno = err;
+        return -1;
+    }
+    return (int)r;
+}
+
+int ws_tcgetattr(int fd, void *termios_p) {
+    int err = 0;
+    intptr_t r = ws_syscall(WS_SYS_IOCTL, (uintptr_t)fd, 0x5401 /* TCGETS */, (uintptr_t)termios_p, &err);
+    if (r < 0) {
+        errno = err;
+        return -1;
+    }
+    return 0;
+}
+
+int ws_tcsetattr(int fd, int optional_actions, const void *termios_p) {
+    int err = 0;
+    intptr_t r = ws_syscall(WS_SYS_IOCTL, (uintptr_t)fd, (uintptr_t)optional_actions, (uintptr_t)termios_p, &err);
+    if (r < 0) {
+        errno = err;
+        return -1;
+    }
+    return 0;
+}
 
 int ws_readlink(const char *path, char *buf, size_t bufsiz) {
     int err = 0;

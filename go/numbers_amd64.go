@@ -63,4 +63,5 @@ const (
 	sysFlock           uintptr = 73
 	sysStatfs          uintptr = 137
 	sysFstatfs         uintptr = 138
+	sysExecve          uintptr = 59
 	)
