@@ -85,6 +85,14 @@ func BytePtrFromString(s string) (*byte, error) {
 	b[len(s)] = 0
 	return &b[0], nil
 }
+// Getpid returns the process ID of the calling process directly from the host kernel.
+func Getpid() (int, error) {
+	r1, _, err := Syscall(sysGetpid, 0, 0, 0)
+	if err != nil {
+		return 0, err
+	}
+	return int(r1), nil
+}
 
 // Openat opens a file relative to dirfd.
 func Openat(dirfd int, path string, flags int, mode uint32) (int, error) {
