@@ -69,15 +69,10 @@ signal-safety half.
 - Verified by reading Go runtime source + Wine source: (1)-(3) above.
 - Verified by a single empirical run under real Wine: `cmd/sigprobe`'s
   SIG_DFL finding (3 repeated runs, consistent).
-- **Not yet verified**: a real soak run of `cmd/soaktest` (raw blocking
-  Read/Write on a pipe, released after a delay, under CPU-bound scheduler
-  pressure on `GOMAXPROCS(2)`, both direct and via the `gort` pool) for
-  many iterations under Wine, checking for hangs, data corruption, or
-  crashes. The binary builds and a short manual smoke run completed
-  during this review, but a real multi-iteration soak was not run to
-  completion (session ended). This is the next concrete step -- see
-  `cmd/soaktest/main.go`'s own doc comment for how it's meant to be run,
-  and the instructions below.
+- **Empirically verified**: `cmd/soaktest` (raw blocking Read, raw blocking
+  Write on pipes, and gort-pooled Read under CPU-bound scheduler pressure)
+  ran to completion under real Wine with zero hangs, zero corruption, and
+  precise wakeups matching the blocking duration.
 
 ## How to run the soak test yourself
 

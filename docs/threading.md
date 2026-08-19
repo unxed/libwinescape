@@ -6,6 +6,10 @@ Standard Go `syscall` invocations are wrapped by runtime hooks (`entersyscall` /
 
 Because `libwinescape` invokes raw assembly `SYSCALL` instructions without cgo and without private runtime hooks, the Go scheduler is unaware that the OS thread has entered the kernel. If a blocking syscall (such as reading from a pipe or slow socket) is issued directly on an arbitrary goroutine, the OS thread and its associated `P` remain blocked.
 
+Key implications:
+1. **GOMAXPROCS Sizing:** For applications doing concurrent raw blocking I/O, `GOMAXPROCS` should be configured to ensure sufficient spare `P` processors remain available for other runnable goroutines.
+2. **Stop-The-World Awareness:** Avoid triggering global `stopTheWorld` operations (e.g. `runtime.ReadMemStats` or heavy allocations that force STW GC) while waiting on inter-goroutine unblocking rendezvous across raw syscalls.
+
 ## The Solution: `winescape/gort`
 
 For non-blocking filesystem I/O on local files, direct calls have minimal latency.
