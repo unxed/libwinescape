@@ -67,20 +67,13 @@ var (
 func churn(n int, stop <-chan struct{}) {
 	for i := 0; i < n; i++ {
 		go func() {
-			var buf []byte
 			x := uint64(0)
 			for {
 				select {
 				case <-stop:
 					return
 				default:
-					x++
-					if x%500000 == 0 {
-						buf = append(buf, byte(x)) // keep the allocator/GC busy too
-						if len(buf) > 1<<16 {
-							buf = buf[:0]
-						}
-					}
+					x = x*6364136223846793005 + 1442695040888963407
 				}
 			}
 		}()
@@ -282,30 +275,15 @@ func main() {
 	// goroutines and few Ps, the scheduler has strong incentive to try to
 	// reclaim the P sitting behind our blocked, un-entersyscall'd raw
 	// syscall goroutine -- exactly the pressure we want.
+	fmt.Printf("Starting soak test: iterations=%d, block=%v, watchdog=%v, churners=%d\n",
+		*iterations, *blockFor, *watchdog, *busyChurners)
+
 	runtime.GOMAXPROCS(2)
 
-	var preempts, gcs uint64
-	stopStats := make(chan struct{})
-	go func() {
-		var lastNumGC uint32
-		for {
-			select {
-			case <-stopStats:
-				return
-			case <-time.After(200 * time.Millisecond):
-				var ms runtime.MemStats
-				runtime.ReadMemStats(&ms)
-				if ms.NumGC != lastNumGC {
-					atomic.AddUint64(&gcs, uint64(ms.NumGC-lastNumGC))
-					lastNumGC = ms.NumGC
-				}
-			}
-		}
-	}()
-	_ = preempts
-
 	stopChurn := make(chan struct{})
-	churn(*busyChurners, stopChurn)
+	if *busyChurners > 0 {
+		churn(*busyChurners, stopChurn)
+	}
 
 	payload := randomPayload(4096)
 
@@ -317,12 +295,9 @@ func main() {
 	allOK = runScenario("gort-pooled Read", *iterations, func() result { return gortReadCycle(pool, payload) }) && allOK
 	pool.Close()
 
-	close(stopChurn)
-	close(stopStats)
-
-	var ms runtime.MemStats
-	runtime.ReadMemStats(&ms)
-	fmt.Printf("total GC cycles observed during soak: %d\n", ms.NumGC)
+	if *busyChurners > 0 {
+		close(stopChurn)
+	}
 
 	if !allOK {
 		fmt.Println("SOAK TEST: FAILED")

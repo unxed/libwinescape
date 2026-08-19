@@ -41,7 +41,19 @@ signal-safety half.
    the kernel and blocked, `SIGUSR1` delivery yields the normal
    EINTR/ERESTART semantics to userspace.
 
-4. **The one real, concrete gap found: inconsistent EINTR handling.**
+4. **The stopTheWorld deadlock constraint for raw blocking syscalls.**
+   Because raw `SYSCALL` instructions bypass `entersyscall`, the executing M
+   and its P remain in `_Prunning`. If any goroutine initiates a
+   `stopTheWorld` (e.g. `runtime.ReadMemStats` or a memory allocation triggering
+   GC STW phase) while another M is blocked in a raw kernel syscall waiting for
+   an in-process event (like a pipe write from another goroutine), a deadlock
+   ensues: STW cannot complete until the blocked M reaches a safe point, but
+   the goroutine that would unblock it cannot run until STW completes.
+   Therefore, raw blocking syscalls must either be non-blocking (event loop),
+   isolated on dedicated worker pools (`gort`), or guarded against concurrent
+   in-process STW triggers during inter-goroutine rendezvous.
+
+5. **The one real, concrete gap found: inconsistent EINTR handling.**
    Before this review, only `Sleep`/`ClockNanosleep` retried on
    EINTR/ERESTART; every other blocking-capable wrapper
    (`Read`/`Write`/`Pread`/`Pwrite`/`Openat`/`Flock`/`Accept4`/`Wait4`)
