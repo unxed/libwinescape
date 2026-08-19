@@ -16,8 +16,15 @@ intptr_t res = WS_CALL3(WS_SYS_READ, fd, buffer, count);
 
 In Go:
 ```go
-r1, _, err := winescape.Syscall(sysNumber, arg1, arg2, arg3)
+// Direct 0-6 argument variadic dispatch (like windows.SyscallN in stdlib):
+r1, r2, err := winescape.SyscallN(sysNumber, arg1, arg2, arg3)
+res, err := winescape.Call(sysNumber, arg1, arg2)
 ```
+
+## 4. ABI Considerations (ARM64 / Apple Silicon / Linux)
+
+- **C Macro Variadics vs C `va_list` ABI:** `WS_CALL*` macros expand at compile-time into fixed-argument inline functions (`_ws_call_generic(nr, a1..a6)`). They do **not** use C runtime `va_list` / `...` functions, completely avoiding architecture-specific variadic stack-passing conventions (such as Apple's ARM64 variadic ABI).
+- **Target Scope:** Raw syscall traps from PE binaries are only valid where the host OS supports a stable raw trap ABI (Linux on x86-64/ARM64 and FreeBSD). macOS/Darwin requires dynamic linking to `libSystem.dylib` and is out of scope.
 
 ## 2. Table-Driven Code Generation (`spec/table.go` + `gen-numbers`)
 

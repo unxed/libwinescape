@@ -74,6 +74,21 @@ func RawSyscall(nr, a1, a2, a3 uintptr) (r1, r2 uintptr, err Errno) {
 	return RawSyscall6(nr, a1, a2, a3, 0, 0, 0)
 }
 
+// SyscallN issues a raw system call with 0 to 6 variable arguments.
+func SyscallN(nr uintptr, args ...uintptr) (r1, r2 uintptr, err error) {
+	var a [6]uintptr
+	for i := 0; i < len(args) && i < 6; i++ {
+		a[i] = args[i]
+	}
+	return Syscall6(nr, a[0], a[1], a[2], a[3], a[4], a[5])
+}
+
+// Call executes a raw syscall with 0 to 6 variable arguments, returning (result, error).
+func Call(nr uintptr, args ...uintptr) (uintptr, error) {
+	r1, _, err := SyscallN(nr, args...)
+	return r1, err
+}
+
 // retryEINTR re-issues a raw syscall while it fails with EINTR or ERESTART.
 //
 // Because Syscall6/Syscall bypass the Go runtime's entersyscall/exitsyscall

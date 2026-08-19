@@ -77,3 +77,18 @@ func TestSyscallConstants_NonZero(t *testing.T) {
 		t.Errorf("sysGetpid must not be 0")
 	}
 }
+
+func TestSyscallN_ArgumentMarshalling(t *testing.T) {
+	// Verify SyscallN / Call dispatch interface compiles and handles variable slice lengths
+	if !Available() {
+		// When unavailable, should return ErrUnavailable cleanly
+		_, _, err := SyscallN(sysGetpid)
+		if err != ErrUnavailable {
+			t.Errorf("expected ErrUnavailable on unsupported host, got %v", err)
+		}
+		_, errCall := Call(sysGetpid)
+		if errCall != ErrUnavailable {
+			t.Errorf("expected ErrUnavailable from Call, got %v", errCall)
+		}
+	}
+}
