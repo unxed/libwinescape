@@ -16,6 +16,7 @@ var (
 	availableCached  bool
 	availableChecked bool
 	selfTestErr      error
+	selfTestRunning  bool
 )
 
 // IsWine returns true if running under the Wine compatibility layer.
@@ -98,6 +99,22 @@ func Available() bool {
 	if availableChecked {
 		return availableCached
 	}
+	if selfTestRunning {
+		// selfTest() below exercises the real I/O path via the same
+		// high-level wrappers (CreateTemp/Open/Read/Write/Close/Unlink)
+		// every other caller uses -- deliberately, so the self-test proves
+		// the actual call path works, not a separate bypass route. Those
+		// wrappers all funnel through Syscall6, which gates on Available()
+		// itself. Without this branch that's unbounded recursion:
+		// Available() -> selfTest() -> Open() -> Syscall6() -> Available()
+		// -> selfTest() -> ... (confirmed the hard way -- stack overflow
+		// under real Wine). IsWine()/HostOS()=="linux" have already been
+		// confirmed by the caller of selfTest() below before
+		// selfTestRunning is set, so answering "proceed" here for the
+		// duration of the self-test itself is safe, not a bypass of any
+		// check that hasn't actually run yet.
+		return true
+	}
 	if !IsWine() {
 		availableChecked = true
 		return false
@@ -118,7 +135,10 @@ func Available() bool {
 	// file, plus one deliberate-failure path) right now, on this machine, on
 	// this Wine version, before anything trusts it. See selfTest's own doc
 	// comment for exactly what this does and doesn't catch.
-	if err := selfTest(); err != nil {
+	selfTestRunning = true
+	err := selfTest()
+	selfTestRunning = false
+	if err != nil {
 		selfTestErr = err
 		availableCached = false
 		availableChecked = true
