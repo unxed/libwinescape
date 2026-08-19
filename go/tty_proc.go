@@ -101,12 +101,20 @@ func Kill(pid int, sig int) error {
 }
 
 // Wait4 waits for process state changes on pid.
+//
+// A blocking wait4 (no WNOHANG) interrupted before any child has changed
+// state has observed nothing, so retrying on EINTR/ERESTART is safe and
+// matches what every libc wrapper for wait()/waitpid() does. This does not
+// interfere with WNOHANG-based polling: a WNOHANG call with no state change
+// yet returns 0 immediately, it does not fail with EINTR.
 func Wait4(pid int, status *int32, options int, rusage unsafe.Pointer) (int, error) {
 	var statPtr uintptr
 	if status != nil {
 		statPtr = uintptr(unsafe.Pointer(status))
 	}
-	r1, _, err := Syscall6(sysWait4, uintptr(pid), statPtr, uintptr(options), uintptr(rusage), 0, 0)
+	r1, _, err := retryEINTR(func() (uintptr, uintptr, error) {
+		return Syscall6(sysWait4, uintptr(pid), statPtr, uintptr(options), uintptr(rusage), 0, 0)
+	})
 	if err != nil {
 		return -1, err
 	}

@@ -73,3 +73,36 @@ func RawSyscall6(nr, a1, a2, a3, a4, a5, a6 uintptr) (r1, r2 uintptr, err Errno)
 func RawSyscall(nr, a1, a2, a3 uintptr) (r1, r2 uintptr, err Errno) {
 	return RawSyscall6(nr, a1, a2, a3, 0, 0, 0)
 }
+
+// retryEINTR re-issues a raw syscall while it fails with EINTR or ERESTART.
+//
+// Because Syscall6/Syscall bypass the Go runtime's entersyscall/exitsyscall
+// hooks, none of the usual retry-on-EINTR machinery that the standard
+// "syscall" package provides (see internal/poll.ignoringEINTR) applies here.
+// The host kernel still delivers SIGURG (Go's async preemption signal) and,
+// if a profiler is active, SIGPROF to the OS thread at any time; the Go
+// runtime installs all of its signal handlers with SA_RESTART, so most
+// interrupted blocking calls are silently restarted by the kernel itself,
+// but a few classes of syscalls are documented to never auto-restart
+// regardless of SA_RESTART (see signal(7)): most notably connect(2), and
+// read/recv/accept-family calls on a socket that has an SO_RCVTIMEO/
+// SO_SNDTIMEO timeout set. retryEINTR is the userspace fallback for those.
+//
+// It must ONLY be used to wrap calls that, per POSIX, have no observable
+// side effect when interrupted before completing (a fresh attempt is
+// equivalent to the original one) — e.g. read, write, open, flock, wait4,
+// accept4. It must NEVER be used for close(2) (a signal arriving after the
+// descriptor was already released, but before the raw syscall returned to
+// Go, would make a blind retry close an unrelated, meanwhile-reused fd) or
+// for connect(2) on a blocking socket (POSIX requires waiting for
+// writability via select/poll and checking SO_ERROR instead of calling
+// connect again; see the comment on Connect).
+func retryEINTR(fn func() (uintptr, uintptr, error)) (uintptr, uintptr, error) {
+	for {
+		r1, r2, err := fn()
+		if err == EINTR || err == ERESTART {
+			continue
+		}
+		return r1, r2, err
+	}
+}

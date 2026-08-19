@@ -268,7 +268,12 @@ func Openat(dirfd int, path string, flags int, mode uint32) (int, error) {
 	if err != nil {
 		return -1, err
 	}
-	r1, _, errSys := Syscall6(sysOpenat, uintptr(dirfd), uintptr(unsafe.Pointer(p)), uintptr(flags), uintptr(mode), 0, 0)
+	// A blocking open() (e.g. opening a FIFO for reading with no writer yet
+	// attached) can be interrupted by a signal before it has any effect, so
+	// it's safe to retry on EINTR/ERESTART.
+	r1, _, errSys := retryEINTR(func() (uintptr, uintptr, error) {
+		return Syscall6(sysOpenat, uintptr(dirfd), uintptr(unsafe.Pointer(p)), uintptr(flags), uintptr(mode), 0, 0)
+	})
 	if errSys != nil {
 		return -1, errSys
 	}
@@ -292,7 +297,12 @@ func Read(fd int, p []byte) (int, error) {
 	if len(p) > 0 {
 		ptr = uintptr(unsafe.Pointer(&p[0]))
 	}
-	r1, _, err := Syscall(sysRead, uintptr(fd), ptr, uintptr(len(p)))
+	// read() interrupted before any byte is transferred returns EINTR with
+	// no side effect (a short read due to a signal is reported as a
+	// successful partial count, not as an error), so retrying is safe.
+	r1, _, err := retryEINTR(func() (uintptr, uintptr, error) {
+		return Syscall(sysRead, uintptr(fd), ptr, uintptr(len(p)))
+	})
 	if err != nil {
 		return 0, err
 	}
@@ -305,7 +315,11 @@ func Write(fd int, p []byte) (int, error) {
 	if len(p) > 0 {
 		ptr = uintptr(unsafe.Pointer(&p[0]))
 	}
-	r1, _, err := Syscall(sysWrite, uintptr(fd), ptr, uintptr(len(p)))
+	// Same reasoning as Read: a signal-interrupted write() with zero bytes
+	// transferred returns EINTR with no side effect, so retry is safe.
+	r1, _, err := retryEINTR(func() (uintptr, uintptr, error) {
+		return Syscall(sysWrite, uintptr(fd), ptr, uintptr(len(p)))
+	})
 	if err != nil {
 		return 0, err
 	}
@@ -318,7 +332,9 @@ func Pread(fd int, p []byte, offset int64) (int, error) {
 	if len(p) > 0 {
 		ptr = uintptr(unsafe.Pointer(&p[0]))
 	}
-	r1, _, err := Syscall6(sysPread64, uintptr(fd), ptr, uintptr(len(p)), uintptr(offset), 0, 0)
+	r1, _, err := retryEINTR(func() (uintptr, uintptr, error) {
+		return Syscall6(sysPread64, uintptr(fd), ptr, uintptr(len(p)), uintptr(offset), 0, 0)
+	})
 	if err != nil {
 		return 0, err
 	}
@@ -331,7 +347,9 @@ func Pwrite(fd int, p []byte, offset int64) (int, error) {
 	if len(p) > 0 {
 		ptr = uintptr(unsafe.Pointer(&p[0]))
 	}
-	r1, _, err := Syscall6(sysPwrite64, uintptr(fd), ptr, uintptr(len(p)), uintptr(offset), 0, 0)
+	r1, _, err := retryEINTR(func() (uintptr, uintptr, error) {
+		return Syscall6(sysPwrite64, uintptr(fd), ptr, uintptr(len(p)), uintptr(offset), 0, 0)
+	})
 	if err != nil {
 		return 0, err
 	}
@@ -457,8 +475,14 @@ func CopyFileRange(fdIn int, offIn *int64, fdOut int, offOut *int64, count int, 
 }
 
 // Flock applies or removes an advisory lock on open file descriptor fd.
+// A blocking flock(2) without LOCK_NB can wait indefinitely for the lock to
+// become available; per flock(2) itself, a signal-interrupted attempt has
+// not taken the lock, so retrying on EINTR/ERESTART is the documented,
+// correct behavior.
 func Flock(fd int, how int) error {
-	_, _, err := Syscall(sysFlock, uintptr(fd), uintptr(how), 0)
+	_, _, err := retryEINTR(func() (uintptr, uintptr, error) {
+		return Syscall(sysFlock, uintptr(fd), uintptr(how), 0)
+	})
 	return err
 }
 

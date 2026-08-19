@@ -30,6 +30,42 @@ func TestPOSIX_ErrnoConstants(t *testing.T) {
 	}
 }
 
+func TestRetryEINTR_RetriesOnEINTRAndERESTART(t *testing.T) {
+	for _, injected := range []error{EINTR, ERESTART} {
+		calls := 0
+		r1, r2, err := retryEINTR(func() (uintptr, uintptr, error) {
+			calls++
+			if calls < 3 {
+				return 0, 0, injected
+			}
+			return 42, 7, nil
+		})
+		if err != nil {
+			t.Fatalf("expected eventual success, got err=%v", err)
+		}
+		if calls != 3 {
+			t.Errorf("expected exactly 3 attempts, got %d", calls)
+		}
+		if r1 != 42 || r2 != 7 {
+			t.Errorf("unexpected results r1=%d r2=%d", r1, r2)
+		}
+	}
+}
+
+func TestRetryEINTR_PassesThroughOtherErrors(t *testing.T) {
+	calls := 0
+	_, _, err := retryEINTR(func() (uintptr, uintptr, error) {
+		calls++
+		return 0, 0, EBADF
+	})
+	if err != EBADF {
+		t.Errorf("expected EBADF to pass through unmodified, got %v", err)
+	}
+	if calls != 1 {
+		t.Errorf("expected exactly 1 attempt for a non-EINTR error, got %d", calls)
+	}
+}
+
 func TestSyscallConstants_NonZero(t *testing.T) {
 	if sysWrite != 1 && sysWrite != 4 && sysWrite != 64 {
 		t.Errorf("sysWrite number %d is not matching known platforms", sysWrite)
