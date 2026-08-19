@@ -28,7 +28,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 3,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 0, ArchARM64: 63},
-			OSFreeBSD: {ArchAMD64: 3},
+			OSFreeBSD: {ArchAMD64: 3, ArchARM64: 3},
 		},
 	},
 	{
@@ -36,7 +36,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 3,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 1, ArchARM64: 64},
-			OSFreeBSD: {ArchAMD64: 4},
+			OSFreeBSD: {ArchAMD64: 4, ArchARM64: 4},
 		},
 	},
 	{
@@ -44,7 +44,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 3,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 2},
-			OSFreeBSD: {ArchAMD64: 5},
+			OSFreeBSD: {ArchAMD64: 5, ArchARM64: 5},
 		},
 		Note: "Linux arm64 uses openat (56)",
 	},
@@ -53,7 +53,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 1,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 3, ArchARM64: 57},
-			OSFreeBSD: {ArchAMD64: 6},
+			OSFreeBSD: {ArchAMD64: 6, ArchARM64: 6},
 		},
 	},
 	{
@@ -61,7 +61,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 2,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 5, ArchARM64: 80},
-			OSFreeBSD: {ArchAMD64: 551},
+			OSFreeBSD: {ArchAMD64: 551, ArchARM64: 551},
 		},
 	},
 	{
@@ -69,7 +69,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 3,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 8, ArchARM64: 62},
-			OSFreeBSD: {ArchAMD64: 478},
+			OSFreeBSD: {ArchAMD64: 478, ArchARM64: 478},
 		},
 	},
 	{
@@ -77,7 +77,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 4,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 17, ArchARM64: 67},
-			OSFreeBSD: {ArchAMD64: 475},
+			OSFreeBSD: {ArchAMD64: 475, ArchARM64: 475},
 		},
 	},
 	{
@@ -85,7 +85,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 4,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 18, ArchARM64: 68},
-			OSFreeBSD: {ArchAMD64: 476},
+			OSFreeBSD: {ArchAMD64: 476, ArchARM64: 476},
 		},
 	},
 	{
@@ -93,7 +93,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 2,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 21},
-			OSFreeBSD: {ArchAMD64: 33},
+			OSFreeBSD: {ArchAMD64: 33, ArchARM64: 33},
 		},
 		Note: "Linux arm64 uses faccessat (48)",
 	},
@@ -102,7 +102,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 0,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 39, ArchARM64: 172},
-			OSFreeBSD: {ArchAMD64: 20},
+			OSFreeBSD: {ArchAMD64: 20, ArchARM64: 20},
 		},
 	},
 	{
@@ -110,7 +110,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 2,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 83},
-			OSFreeBSD: {ArchAMD64: 136},
+			OSFreeBSD: {ArchAMD64: 136, ArchARM64: 136},
 		},
 		Note: "Linux arm64 uses mkdirat (34)",
 	},
@@ -119,7 +119,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 1,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 84},
-			OSFreeBSD: {ArchAMD64: 137},
+			OSFreeBSD: {ArchAMD64: 137, ArchARM64: 137},
 		},
 		Note: "Linux arm64 uses unlinkat with AT_REMOVEDIR (35)",
 	},
@@ -128,7 +128,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 2,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 82},
-			OSFreeBSD: {ArchAMD64: 128},
+			OSFreeBSD: {ArchAMD64: 128, ArchARM64: 128},
 		},
 		Note: "Linux arm64 uses renameat (38)",
 	},
@@ -137,7 +137,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 1,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 87},
-			OSFreeBSD: {ArchAMD64: 10},
+			OSFreeBSD: {ArchAMD64: 10, ArchARM64: 10},
 		},
 		Note: "Linux arm64 uses unlinkat (35)",
 	},
@@ -146,7 +146,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 2,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 88},
-			OSFreeBSD: {ArchAMD64: 57},
+			OSFreeBSD: {ArchAMD64: 57, ArchARM64: 57},
 		},
 		Note: "Linux arm64 uses symlinkat (36)",
 	},
@@ -155,7 +155,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 3,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 89},
-			OSFreeBSD: {ArchAMD64: 58},
+			OSFreeBSD: {ArchAMD64: 58, ArchARM64: 58},
 		},
 		Note: "Linux arm64 uses readlinkat (78)",
 	},
@@ -171,7 +171,7 @@ var SyscallTable = []SyscallEntry{
 		Name: "getdirentries",
 		Args: 4,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
-			OSFreeBSD: {ArchAMD64: 554},
+			OSFreeBSD: {ArchAMD64: 554, ArchARM64: 554},
 		},
 	},
 	{
@@ -179,7 +179,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 4,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 257, ArchARM64: 56},
-			OSFreeBSD: {ArchAMD64: 499},
+			OSFreeBSD: {ArchAMD64: 499, ArchARM64: 499},
 		},
 	},
 	{
@@ -187,7 +187,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 3,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 258, ArchARM64: 34},
-			OSFreeBSD: {ArchAMD64: 500},
+			OSFreeBSD: {ArchAMD64: 500, ArchARM64: 500},
 		},
 	},
 	{
@@ -202,7 +202,7 @@ var SyscallTable = []SyscallEntry{
 		Name: "fstatat",
 		Args: 4,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
-			OSFreeBSD: {ArchAMD64: 552},
+			OSFreeBSD: {ArchAMD64: 552, ArchARM64: 552},
 		},
 	},
 	{
@@ -210,7 +210,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 3,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 263, ArchARM64: 35},
-			OSFreeBSD: {ArchAMD64: 503},
+			OSFreeBSD: {ArchAMD64: 503, ArchARM64: 503},
 		},
 	},
 	{
@@ -218,7 +218,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 4,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 264, ArchARM64: 38},
-			OSFreeBSD: {ArchAMD64: 501},
+			OSFreeBSD: {ArchAMD64: 501, ArchARM64: 501},
 		},
 	},
 	{
@@ -226,7 +226,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 4,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 267, ArchARM64: 78},
-			OSFreeBSD: {ArchAMD64: 505},
+			OSFreeBSD: {ArchAMD64: 505, ArchARM64: 505},
 		},
 	},
 	{
@@ -234,7 +234,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 4,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 269, ArchARM64: 48, ArchRISCV64: 48},
-			OSFreeBSD: {ArchAMD64: 489},
+			OSFreeBSD: {ArchAMD64: 489, ArchARM64: 489},
 		},
 	},
 	{
@@ -242,7 +242,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 2,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 293, ArchARM64: 59, ArchRISCV64: 59},
-			OSFreeBSD: {ArchAMD64: 538},
+			OSFreeBSD: {ArchAMD64: 538, ArchARM64: 538},
 		},
 	},
 	{
@@ -250,7 +250,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 3,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 292, ArchARM64: 24, ArchRISCV64: 24},
-			OSFreeBSD: {ArchAMD64: 545},
+			OSFreeBSD: {ArchAMD64: 545, ArchARM64: 545},
 		},
 	},
 	{
@@ -258,7 +258,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 6,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 9, ArchARM64: 222, ArchRISCV64: 222},
-			OSFreeBSD: {ArchAMD64: 477},
+			OSFreeBSD: {ArchAMD64: 477, ArchARM64: 477},
 		},
 	},
 	{
@@ -266,7 +266,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 2,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 11, ArchARM64: 215, ArchRISCV64: 215},
-			OSFreeBSD: {ArchAMD64: 73},
+			OSFreeBSD: {ArchAMD64: 73, ArchARM64: 73},
 		},
 	},
 	{
@@ -295,7 +295,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 0,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 102, ArchARM64: 174, ArchRISCV64: 174},
-			OSFreeBSD: {ArchAMD64: 24},
+			OSFreeBSD: {ArchAMD64: 24, ArchARM64: 24},
 		},
 	},
 	{
@@ -303,7 +303,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 0,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 104, ArchARM64: 176, ArchRISCV64: 176},
-			OSFreeBSD: {ArchAMD64: 47},
+			OSFreeBSD: {ArchAMD64: 47, ArchARM64: 47},
 		},
 	},
 	{
@@ -311,7 +311,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 0,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 107, ArchARM64: 175, ArchRISCV64: 175},
-			OSFreeBSD: {ArchAMD64: 25},
+			OSFreeBSD: {ArchAMD64: 25, ArchARM64: 25},
 		},
 	},
 	{
@@ -319,7 +319,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 0,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 108, ArchARM64: 177, ArchRISCV64: 177},
-			OSFreeBSD: {ArchAMD64: 43},
+			OSFreeBSD: {ArchAMD64: 43, ArchARM64: 43},
 		},
 	},
 	{
@@ -327,7 +327,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 0,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 110, ArchARM64: 173, ArchRISCV64: 173},
-			OSFreeBSD: {ArchAMD64: 39},
+			OSFreeBSD: {ArchAMD64: 39, ArchARM64: 39},
 		},
 	},
 	{
@@ -335,7 +335,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 3,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 41, ArchARM64: 198, ArchRISCV64: 198},
-			OSFreeBSD: {ArchAMD64: 97},
+			OSFreeBSD: {ArchAMD64: 97, ArchARM64: 97},
 		},
 	},
 	{
@@ -343,7 +343,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 3,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 42, ArchARM64: 203, ArchRISCV64: 203},
-			OSFreeBSD: {ArchAMD64: 98},
+			OSFreeBSD: {ArchAMD64: 98, ArchARM64: 98},
 		},
 	},
 	{
@@ -351,7 +351,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 3,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 49, ArchARM64: 200, ArchRISCV64: 200},
-			OSFreeBSD: {ArchAMD64: 104},
+			OSFreeBSD: {ArchAMD64: 104, ArchARM64: 104},
 		},
 	},
 	{
@@ -359,7 +359,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 2,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 50, ArchARM64: 201, ArchRISCV64: 201},
-			OSFreeBSD: {ArchAMD64: 106},
+			OSFreeBSD: {ArchAMD64: 106, ArchARM64: 106},
 		},
 	},
 	{
@@ -367,7 +367,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 4,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 288, ArchARM64: 242, ArchRISCV64: 242},
-			OSFreeBSD: {ArchAMD64: 541},
+			OSFreeBSD: {ArchAMD64: 541, ArchARM64: 541},
 		},
 	},
 	{
@@ -375,7 +375,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 3,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 16, ArchARM64: 29, ArchRISCV64: 29},
-			OSFreeBSD: {ArchAMD64: 54},
+			OSFreeBSD: {ArchAMD64: 54, ArchARM64: 54},
 		},
 	},
 	{
@@ -383,7 +383,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 2,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 35, ArchARM64: 101, ArchRISCV64: 101},
-			OSFreeBSD: {ArchAMD64: 240},
+			OSFreeBSD: {ArchAMD64: 240, ArchARM64: 240},
 		},
 	},
 	{
@@ -391,7 +391,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 2,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 228, ArchARM64: 113, ArchRISCV64: 113},
-			OSFreeBSD: {ArchAMD64: 232},
+			OSFreeBSD: {ArchAMD64: 232, ArchARM64: 232},
 		},
 	},
 	{
@@ -399,7 +399,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 4,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 230, ArchARM64: 115, ArchRISCV64: 115},
-			OSFreeBSD: {ArchAMD64: 244},
+			OSFreeBSD: {ArchAMD64: 244, ArchARM64: 244},
 		},
 	},
 	{
@@ -407,7 +407,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 2,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 62, ArchARM64: 129, ArchRISCV64: 129},
-			OSFreeBSD: {ArchAMD64: 37},
+			OSFreeBSD: {ArchAMD64: 37, ArchARM64: 37},
 		},
 	},
 	{
@@ -415,7 +415,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 4,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 61, ArchARM64: 260, ArchRISCV64: 260},
-			OSFreeBSD: {ArchAMD64: 7},
+			OSFreeBSD: {ArchAMD64: 7, ArchARM64: 7},
 		},
 	},
 	{
@@ -423,7 +423,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 4,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 268, ArchARM64: 53, ArchRISCV64: 53},
-			OSFreeBSD: {ArchAMD64: 490},
+			OSFreeBSD: {ArchAMD64: 490, ArchARM64: 490},
 		},
 	},
 	{
@@ -431,7 +431,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 5,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 260, ArchARM64: 54, ArchRISCV64: 54},
-			OSFreeBSD: {ArchAMD64: 491},
+			OSFreeBSD: {ArchAMD64: 491, ArchARM64: 491},
 		},
 	},
 	{
@@ -439,7 +439,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 4,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 280, ArchARM64: 88, ArchRISCV64: 88},
-			OSFreeBSD: {ArchAMD64: 547},
+			OSFreeBSD: {ArchAMD64: 547, ArchARM64: 547},
 		},
 	},
 	{
@@ -447,7 +447,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 2,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 77, ArchARM64: 46, ArchRISCV64: 46},
-			OSFreeBSD: {ArchAMD64: 480},
+			OSFreeBSD: {ArchAMD64: 480, ArchARM64: 480},
 		},
 	},
 	{
@@ -455,7 +455,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 3,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 266, ArchARM64: 36, ArchRISCV64: 36},
-			OSFreeBSD: {ArchAMD64: 504},
+			OSFreeBSD: {ArchAMD64: 504, ArchARM64: 504},
 		},
 	},
 	{
@@ -463,7 +463,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 6,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 326, ArchARM64: 285, ArchRISCV64: 285},
-			OSFreeBSD: {ArchAMD64: 569},
+			OSFreeBSD: {ArchAMD64: 569, ArchARM64: 569},
 		},
 	},
 	{
@@ -471,7 +471,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 2,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 73, ArchARM64: 32, ArchRISCV64: 32},
-			OSFreeBSD: {ArchAMD64: 131},
+			OSFreeBSD: {ArchAMD64: 131, ArchARM64: 131},
 		},
 	},
 	{
@@ -479,7 +479,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 2,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 137, ArchARM64: 43, ArchRISCV64: 43},
-			OSFreeBSD: {ArchAMD64: 396},
+			OSFreeBSD: {ArchAMD64: 396, ArchARM64: 396},
 		},
 	},
 	{
@@ -487,7 +487,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 2,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 138, ArchARM64: 44, ArchRISCV64: 44},
-			OSFreeBSD: {ArchAMD64: 397},
+			OSFreeBSD: {ArchAMD64: 397, ArchARM64: 397},
 		},
 	},
 	{
@@ -495,7 +495,7 @@ var SyscallTable = []SyscallEntry{
 		Args: 3,
 		Numbers: map[TargetOS]map[TargetArch]uint64{
 			OSLinux:   {ArchAMD64: 59, ArchARM64: 221, ArchRISCV64: 221},
-			OSFreeBSD: {ArchAMD64: 59},
+			OSFreeBSD: {ArchAMD64: 59, ArchARM64: 59},
 		},
 	},
 }
