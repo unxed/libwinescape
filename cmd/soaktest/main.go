@@ -45,7 +45,6 @@ import (
 	"fmt"
 	"os"
 	"runtime"
-	"sync/atomic"
 	"time"
 
 	winescape "github.com/unxed/libwinescape/go"
