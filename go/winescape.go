@@ -12,6 +12,29 @@ func (e Errno) Error() string {
 	return syscall.Errno(e).Error()
 }
 
+// Is makes errors.Is(err, syscall.ENOENT) (and similar) work correctly when
+// err's dynamic type is winescape.Errno -- which every error this library
+// returns from a raw syscall actually is (see Syscall6/RawSyscall6 in
+// winescape.go). Without this, err == syscall.ENOENT is always false no
+// matter what the actual errno was: Go's == on an error interface compares
+// (concrete type, value), and winescape.Errno and syscall.Errno are
+// different named types even though they share an underlying numeric
+// representation. This bit real internal code (go/vfs_ops.go's MkdirAll/
+// RemoveAll "already exists"/"already gone" checks) before being found and
+// fixed; it would just as easily bite any external caller who reasonably
+// expects the standard library's own error-comparison idiom to work against
+// this library's errors, which is why this fix lives on the type itself
+// rather than only at the internal call sites that happened to be caught.
+func (e Errno) Is(target error) bool {
+	switch t := target.(type) {
+	case syscall.Errno:
+		return uintptr(e) == uintptr(t)
+	case Errno:
+		return e == t
+	}
+	return false
+}
+
 // Standard POSIX / Linux errno constants.
 const (
 	EPERM    = Errno(1)

@@ -15,6 +15,7 @@ var (
 	hostOSChecked    bool
 	availableCached  bool
 	availableChecked bool
+	selfTestErr      error
 )
 
 // IsWine returns true if running under the Wine compatibility layer.
@@ -104,7 +105,36 @@ func Available() bool {
 	os := strings.ToLower(HostOS())
 	// Raw kernel traps from PE code are supported today only on Linux hosts;
 	// see the TODO above for why FreeBSD is deliberately not included yet.
-	availableCached = (os == "linux" || os == "gnu/linux")
+	if os != "linux" && os != "gnu/linux" {
+		availableCached = false
+		availableChecked = true
+		return false
+	}
+	// Belt-and-braces against the standing risk docs/RISK-REVIEW-farmanager-1123.md
+	// item 4 accepts as real: nothing guarantees Wine's raw-syscall passthrough
+	// stays behaved in a future version. A supported HostOS() alone only means
+	// "this used to work here" -- selfTest() actually exercises the code path
+	// this library's callers will use (open/write/read/close/unlink a real
+	// file, plus one deliberate-failure path) right now, on this machine, on
+	// this Wine version, before anything trusts it. See selfTest's own doc
+	// comment for exactly what this does and doesn't catch.
+	if err := selfTest(); err != nil {
+		selfTestErr = err
+		availableCached = false
+		availableChecked = true
+		return false
+	}
+	availableCached = true
 	availableChecked = true
-	return availableCached
+	return true
+}
+
+// SelfTestError returns the reason Available() returned false due to a
+// failed startup self-test, or nil if Available() hasn't been called yet,
+// returned true, or failed for a reason other than the self-test (unsupported
+// host OS, not running under Wine). Exists so a caller that wants to log or
+// display *why* the fast path isn't available can do so instead of only
+// knowing that it isn't.
+func SelfTestError() error {
+	return selfTestErr
 }

@@ -89,7 +89,7 @@ func MkdirAll(dirpath string, perm uint32) error {
 		}
 
 		if err := Mkdir(current, perm); err != nil {
-			if err != syscall.EEXIST && err != syscall.EISDIR {
+			if !errors.Is(err, syscall.EEXIST) && !errors.Is(err, syscall.EISDIR) {
 				var stCur Stat_t
 				if errStat := Stat(current, &stCur); errStat == nil && stCur.IsDir() {
 					continue
@@ -110,7 +110,7 @@ func RemoveAll(targetPath string) error {
 
 	var st Stat_t
 	if err := Lstat(uPath, &st); err != nil {
-		if err == syscall.ENOENT {
+		if errors.Is(err, syscall.ENOENT) {
 			return nil
 		}
 		return err
@@ -127,7 +127,7 @@ func RemoveAll(targetPath string) error {
 				continue
 			}
 			child := path.Join(uPath, e.Name)
-			if errChild := RemoveAll(child); errChild != nil && errChild != syscall.ENOENT {
+			if errChild := RemoveAll(child); errChild != nil && !errors.Is(errChild, syscall.ENOENT) {
 				return errChild
 			}
 		}
@@ -217,7 +217,7 @@ func CreateTemp(dir, pattern string) (*File, error) {
 		if err == nil {
 			return f, nil
 		}
-		if err != syscall.EEXIST {
+		if !errors.Is(err, syscall.EEXIST) {
 			return nil, err
 		}
 	}

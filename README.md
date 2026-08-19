@@ -27,6 +27,16 @@ Unlike approaches that try to dynamically link host ELF `.so` libraries (which i
 
 > **Warning:** This library is specifically designed for code compiled for Windows that executes in a Wine environment. On native Windows, calls will fail safely without crashing.
 
+**`Available()` runs a real self-test, not just an OS-name check.** The first
+call round-trips actual data through open/write/read/close/unlink on a real
+file, plus a deliberate missing-file check that confirms errno translation
+itself works, before reporting `true` -- so a future Wine version that broke
+the raw-syscall path would make `Available()` report `false` automatically,
+rather than silently corrupting data until a human noticed. `SelfTestError()`
+returns why, if it's ever relevant to log. See
+[`docs/RISK-REVIEW-farmanager-1123.md`](docs/RISK-REVIEW-farmanager-1123.md)
+item 4 for what this does and doesn't cover.
+
 **Threading and signal safety under Wine:** see
 [`docs/threading.md`](docs/threading.md) and
 [`docs/STATUS-signal-safety-review.md`](docs/STATUS-signal-safety-review.md)

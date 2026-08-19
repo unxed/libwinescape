@@ -74,13 +74,30 @@ Nothing about this library's design makes Wine's `ntdll`/Unix-call boundary a
 documented, versioned contract; it happens to be stable today because raw
 syscalls sit *below* everything Wine controls, but a hypothetical future Wine
 that started intercepting raw `SYSCALL` traps generically (e.g. for
-sandboxing) would break this without deprecation notice. This is accepted as
-a standing, monitored risk rather than something to be engineered away, since
-there is nothing to engineer against a hypothetical: what can be done is (a)
-keep `cmd/soaktest`/`cmd/sigprobe` runnable so a Wine upgrade can be checked
-against real behavior rather than assumed, and (b) keep the platform-support
-table honest about what's actually been verified versus presumed, which is
-already the practice (see item 3).
+sandboxing) would break this without deprecation notice.
+
+**Mitigated, as of 2026-08-19, by an automatic startup self-test** rather than
+only by the manual `cmd/soaktest`/`cmd/sigprobe` tools a human has to
+remember to run. `Available()` now round-trips real data through the exact
+sequence its callers depend on — create/write/close/reopen/read/compare/
+unlink a real temp file, plus a deliberate open-of-missing-file check that
+confirms errno translation itself is correct, not just "some syscall
+returned success" — once, memoized, on first call. See `go/selftest_windows.go`
+for exactly what this does and doesn't catch: it catches the trampoline not
+reaching the kernel, wrong syscall numbers for the operations it exercises,
+and broken errno translation; it does **not** catch anything that only shows
+up under concurrency/signal pressure (that stays `cmd/soaktest`'s job, and is
+too slow to run at every startup) or bugs in syscalls the test doesn't happen
+to exercise. If a future Wine breaks the raw-syscall path, `Available()`
+reports `false` and every caller falls back to the safe Win32 path
+automatically, instead of a human discovering corruption after the fact.
+`SelfTestError()` exposes the specific failure for logging.
+
+What remains, and is accepted as a standing, monitored risk with no one-time
+technical fix: keeping `cmd/soaktest`/`cmd/sigprobe` runnable so a Wine
+upgrade can still be checked deliberately under load, and keeping the
+platform-support table honest about what's verified versus presumed (see
+item 3).
 
 ## 5. "It works because Wine ultimately runs a normal ELF process, and if you reach a genuine Linux thread without touching Win32 structures, the kernel doesn't know the process is 'Windows'"
 
