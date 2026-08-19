@@ -6,6 +6,12 @@ Raw POSIX syscall trampolines for Windows binaries running under Wine.
 
 `libwinescape` is a lightweight, zero-dependency library (in pure Go assembly and C) that allows Windows-compiled binaries (`GOOS=windows` or MinGW/MSVC) running under Wine to bypass Win32/NTDLL emulation overhead and issue POSIX system calls directly to the host operating system kernel.
 
+**Scope:** this library exists to make Wine-hosted programs feel and perform
+like their native POSIX counterparts, for file-manager-shaped tools
+specifically — not as a general POSIX-for-Windows layer. See
+[`docs/SCOPE.md`](docs/SCOPE.md) for the enforceable boundary, including
+which parts of the API below are borderline and why.
+
 Unlike approaches that try to dynamically link host ELF `.so` libraries (which is fundamentally impossible from pure PE binaries under modern Wine without cgo or custom hypervisors), `libwinescape` invokes the kernel's raw trap instruction (`SYSCALL` on x86-64, `SVC #0` on ARM64) with native host register calling conventions.
 
 ## Platform Support Matrix
@@ -20,6 +26,14 @@ Unlike approaches that try to dynamically link host ELF `.so` libraries (which i
 | **Illumos / Solaris** | **No** (unstable kernel syscall ABI; `libc` required) | Out of scope |
 
 > **Warning:** This library is specifically designed for code compiled for Windows that executes in a Wine environment. On native Windows, calls will fail safely without crashing.
+
+**Threading and signal safety under Wine:** see
+[`docs/threading.md`](docs/threading.md) and
+[`docs/STATUS-signal-safety-review.md`](docs/STATUS-signal-safety-review.md)
+for what's been verified (by reading Wine/Go runtime source and by soak
+testing under real Wine) versus what remains a standing, monitored risk —
+including a response to external critique of this approach in
+[`docs/RISK-REVIEW-farmanager-1123.md`](docs/RISK-REVIEW-farmanager-1123.md).
 
 ## Architecture
 
