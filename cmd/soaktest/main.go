@@ -72,7 +72,10 @@ func churn(n int, stop <-chan struct{}) {
 				case <-stop:
 					return
 				default:
-					x = x*6364136223846793005 + 1442695040888963407
+					for j := 0; j < 10000; j++ {
+						x = x*6364136223846793005 + 1442695040888963407
+					}
+					runtime.Gosched()
 				}
 			}
 		}()
@@ -99,8 +102,10 @@ func blockingReadCycle(payload []byte) result {
 	start := time.Now()
 	got := make([]byte, len(payload))
 	done := make(chan result, 1)
+	readerReady := make(chan struct{})
 
 	go func() {
+		close(readerReady)
 		total := 0
 		for total < len(got) {
 			n, err := winescape.Read(rfd, got[total:])
@@ -117,10 +122,9 @@ func blockingReadCycle(payload []byte) result {
 		done <- result{ok: bytes.Equal(got, payload), detail: "read"}
 	}()
 
-	// Give the reader time to genuinely block in the kernel before we
-	// release it -- this is the window during which sysmon should be
-	// trying to preempt that M.
+	<-readerReady
 	time.Sleep(*blockFor)
+
 	if _, err := winescape.Write(wfd, payload); err != nil {
 		return result{detail: fmt.Sprintf("write (unblocking): %v", err)}
 	}
@@ -277,7 +281,11 @@ func main() {
 	fmt.Printf("Starting soak test: iterations=%d, block=%v, watchdog=%v, churners=%d\n",
 		*iterations, *blockFor, *watchdog, *busyChurners)
 
-	runtime.GOMAXPROCS(2)
+	numProcs := runtime.NumCPU()
+	if numProcs < 4 {
+		numProcs = 4
+	}
+	runtime.GOMAXPROCS(numProcs)
 
 	stopChurn := make(chan struct{})
 	if *busyChurners > 0 {
