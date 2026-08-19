@@ -586,6 +586,47 @@ func Rename(oldpath, newpath string) error {
 	return Renameat(AT_FDCWD, oldpath, AT_FDCWD, newpath)
 }
 
+// Renameat2 flags (Linux only -- see the RENAME_NOREPLACE comment on
+// Renameat2 itself for why there's no FreeBSD equivalent here).
+const (
+	RENAME_NOREPLACE = 1 << 0
+	RENAME_EXCHANGE  = 1 << 1
+	RENAME_WHITEOUT  = 1 << 2
+)
+
+// Renameat2 is Renameat with a flags argument, most usefully
+// RENAME_NOREPLACE for an atomic rename that fails with EEXIST instead of
+// silently overwriting an existing destination -- something plain rename(2)
+// cannot do atomically (a check-then-rename from userspace always has a
+// race). Linux only: sysRenameat2 is unset (0, which would resolve to
+// read(2)) on every other target, so this returns ENOSYS itself rather than
+// letting a zero syscall number silently issue the wrong syscall -- see
+// spec/table.go's comment on why FreeBSD has no number to give here.
+func Renameat2(olddirfd int, oldpath string, newdirfd int, newpath string, flags uint) error {
+	if sysRenameat2 == 0 {
+		return syscall.ENOSYS
+	}
+	oldP, err := BytePtrFromString(ToUnixPath(oldpath))
+	if err != nil {
+		return err
+	}
+	newP, err := BytePtrFromString(ToUnixPath(newpath))
+	if err != nil {
+		return err
+	}
+	_, _, errSys := Syscall6(sysRenameat2, uintptr(olddirfd), uintptr(unsafe.Pointer(oldP)), uintptr(newdirfd), uintptr(unsafe.Pointer(newP)), uintptr(flags), 0)
+	return errSys
+}
+
+// RenameNoReplace renames oldpath to newpath, failing atomically with
+// syscall.EEXIST if newpath already exists, instead of replacing it.
+// Returns syscall.ENOSYS on hosts without renameat2 (see Renameat2); callers
+// needing a portable fallback should catch that themselves, the same way
+// f4's vfs/rename_noreplace_linux.go already does for the non-Wine build.
+func RenameNoReplace(oldpath, newpath string) error {
+	return Renameat2(AT_FDCWD, oldpath, AT_FDCWD, newpath, RENAME_NOREPLACE)
+}
+
 // Readlinkat reads the value of a symbolic link relative to dirfd.
 func Readlinkat(dirfd int, path string, buf []byte) (int, error) {
 	p, err := BytePtrFromString(ToUnixPath(path))

@@ -53,7 +53,7 @@ including a response to external critique of this approach in
 4. **Optional Runtime Scheduler Integration (`go/gort`):** Dedicated `LockOSThread` worker pool to prevent Go runtime scheduler starvation during blocking syscalls.
 ## API Catalog
 
-- **POSIX File I/O & Metadata:** `Open`, `Openat`, `Read`, `Write`, `Pread`, `Pwrite`, `Seek`, `Close`, `Fstat`, `Fstatat`, `Stat`, `Lstat`, `Unlink`, `Unlinkat`, `Rmdir`, `Mkdir`, `Mkdirat`, `Rename`, `Renameat`, `Symlink`, `Symlinkat`, `Readlink`, `Readlinkat`, `Access`, `Faccessat`, `Chmod`, `Fchmodat`, `Chown`, `Fchownat`, `Lchown`, `Chtimes`, `Utimensat`, `Truncate`, `Ftruncate`.
+- **POSIX File I/O & Metadata:** `Open`, `Openat`, `Read`, `Write`, `Pread`, `Pwrite`, `Seek`, `Close`, `Fstat`, `Fstatat`, `Stat`, `Lstat`, `Unlink`, `Unlinkat`, `Rmdir`, `Mkdir`, `Mkdirat`, `Rename`, `Renameat`, `Renameat2`/`RenameNoReplace` (atomic no-clobber rename, Linux only), `Symlink`, `Symlinkat`, `Readlink`, `Readlinkat`, `Access`, `Faccessat`, `Chmod`, `Fchmodat`, `Chown`, `Fchownat`, `Lchown`, `Chtimes`, `Utimensat`, `Truncate`, `Ftruncate`.
 - **High-Level VFS Operations:** `ReadFile`, `WriteFile`, `MkdirAll`, `RemoveAll`, `CopyFile` (with in-kernel zero-copy `copy_file_range`), `CreateTemp`, `ToUnixPath` (instant zero-syscall path normalization).
 - **Fast Directory Scanning:** `Getdents64`, `ParseDirent64`, `ReadDir` (chunked 64KB kernel buffer reader).
 - **Standard `io/fs.FS` Integration:** `DirFS(root)` providing `fs.FS`, `fs.StatFS`, `fs.ReadDirFS`, `fs.ReadFileFS`, `FileInfo`, `DirEntry`.

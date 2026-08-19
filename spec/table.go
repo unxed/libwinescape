@@ -222,6 +222,19 @@ var SyscallTable = []SyscallEntry{
 		},
 	},
 	{
+		// Linux only: RENAME_NOREPLACE (and RENAME_EXCHANGE) have no FreeBSD
+		// equivalent syscall -- FreeBSD's renameat(2) has no flags argument,
+		// so there is no number to add there without inventing one. Verified
+		// against Linux kernel uapi headers (arch/x86/include/generated/uapi/
+		// asm/unistd_64.h, include/uapi/asm-generic/unistd.h for arm64), not
+		// assumed from renameat's neighboring number.
+		Name: "renameat2",
+		Args: 5,
+		Numbers: map[TargetOS]map[TargetArch]uint64{
+			OSLinux: {ArchAMD64: 316, ArchARM64: 276},
+		},
+	},
+	{
 		Name: "readlinkat",
 		Args: 4,
 		Numbers: map[TargetOS]map[TargetArch]uint64{

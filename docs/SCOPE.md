@@ -61,6 +61,7 @@ it says an existing feature doesn't clearly pass.
 |---|---|---|
 | `Open/Read/Write/Pread/Pwrite/Close/Seek`, `Stat/Lstat/Fstat`, `ReadDir`/`Getdents64` | **In scope** | Test 1 (speed) and test 2 (bypasses `wineserver` round-trips) — this is the core of what `f4`'s `vfs/hostfs` actually calls. |
 | `Chmod/Chown/Lchown/Chtimes`, `Symlink/Readlink`, `Mkdir/Rmdir/Rename/Unlink` | **In scope** | Test 1 — Win32 cannot represent POSIX permissions/ownership/symlinks at all; this is capability, not speed. |
+| `Renameat2`/`RenameNoReplace` (`RENAME_NOREPLACE`) | **In scope** | Test 1 — atomic no-clobber rename has no race-free userspace equivalent (a check-then-rename always has a TOCTOU gap); `f4`'s own real-POSIX build already relies on exactly this (`vfs/rename_noreplace_linux.go`), so posix mode needs it to behave the same way, not merely similarly. |
 | `copy_file_range`/`CopyFile` (kernel zero-copy) | **In scope** | Test 1 — directly affects perceived copy speed on same-filesystem operations, the kind of thing a file manager's users notice. |
 | `InotifyInit1`/`InotifyAddWatch`/`ParseInotifyEvents` | **In scope** | Test 1/2 — replaces polling or `ReadDirectoryChangesW` translated through Wine; real-time panel refresh is a genuine, visible UX property. |
 | `Ioctl`/`TIOCGWINSZ`/`Tcgetattr`/`Tcsetattr`/`MakeRaw`, `Execve`/`Pipe2` for running a native shell | **In scope** | Test 1/2 — this is precisely what lets an embedded terminal be a real POSIX shell instead of `cmd.exe` under `wineconsole`, which WINE.md documents as an actual source of bugs in `f4`. |
