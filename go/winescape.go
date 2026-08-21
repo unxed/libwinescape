@@ -1,6 +1,9 @@
 package winescape
 
-import "syscall"
+import (
+	"io/fs"
+	"syscall"
+)
 
 // Errno represents a host kernel error number.
 type Errno uintptr
@@ -31,6 +34,25 @@ func (e Errno) Is(target error) bool {
 		return uintptr(e) == uintptr(t)
 	case Errno:
 		return e == t
+	}
+	// The io/fs sentinels are the other half of the same promise, and the
+	// half that gets used far more often: os.IsNotExist and its friends are
+	// spelled errors.Is(err, fs.ErrNotExist) in modern code, and the whole
+	// idiom for "did this fail because the file simply is not there" runs
+	// through them. syscall.Errno answers them on every platform; without
+	// the same answer here, a caller asking that question about one of our
+	// errors is told no, and treats an ordinary absent file as a hard
+	// failure. The mapping is the POSIX one, because these are POSIX errnos
+	// -- not the Win32 one syscall.Errno would apply to the same numbers.
+	switch target {
+	case fs.ErrNotExist:
+		return e == ENOENT || e == ENOTDIR
+	case fs.ErrExist:
+		return e == EEXIST
+	case fs.ErrPermission:
+		return e == EACCES || e == EPERM
+	case fs.ErrInvalid:
+		return e == EINVAL
 	}
 	return false
 }

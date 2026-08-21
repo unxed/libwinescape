@@ -1,6 +1,9 @@
 package winescape
 
 import (
+	"errors"
+	"io/fs"
+	"syscall"
 	"testing"
 )
 
@@ -90,5 +93,37 @@ func TestSyscallN_ArgumentMarshalling(t *testing.T) {
 		if errCall != ErrUnavailable {
 			t.Errorf("expected ErrUnavailable from Call, got %v", errCall)
 		}
+	}
+}
+
+func TestErrno_IsMatchesFsSentinels(t *testing.T) {
+	// os.IsNotExist and its friends are spelled errors.Is(err, fs.ErrNotExist)
+	// in modern code, and that is how callers ask "is the file simply not
+	// there". An errno that cannot answer turns an absent file into a hard
+	// failure at every one of those call sites.
+	cases := []struct {
+		errno  Errno
+		target error
+		want   bool
+	}{
+		{ENOENT, fs.ErrNotExist, true},
+		{ENOTDIR, fs.ErrNotExist, true},
+		{EEXIST, fs.ErrNotExist, false},
+		{EEXIST, fs.ErrExist, true},
+		{EACCES, fs.ErrPermission, true},
+		{EPERM, fs.ErrPermission, true},
+		{ENOENT, fs.ErrPermission, false},
+		{EINVAL, fs.ErrInvalid, true},
+	}
+	for _, tc := range cases {
+		if got := errors.Is(error(tc.errno), tc.target); got != tc.want {
+			t.Errorf("errors.Is(Errno(%d), %v) = %v, want %v", tc.errno, tc.target, got, tc.want)
+		}
+	}
+
+	// The syscall.Errno comparison the type already supported must keep
+	// working: nothing above may shadow it.
+	if !errors.Is(error(ENOENT), syscall.ENOENT) {
+		t.Error("errors.Is(ENOENT, syscall.ENOENT) = false, want true")
 	}
 }
